@@ -1,6 +1,9 @@
-﻿# SatyaCheck — Fake News Detection System
+﻿
+# SatyaCheck — Fake News Detection System
 
-SatyaCheck is a web app that helps users identify whether a news article, claim, or social media post is real, fake, or misleading. It uses a multi-model AI approach where GPT and Gemini independently analyze a claim, then Claude synthesizes their findings into a final streamed response.
+SatyaCheck is a web app that helps users identify whether a news article, claim, or social media post is real, fake, 
+or misleading. It uses a multi-model AI approach where Gemini runs a full contextual analysis to determine the 
+credibility of claims.
 
 "Satya" means **Truth** in Sanskrit.
 
@@ -8,13 +11,15 @@ SatyaCheck is a web app that helps users identify whether a news article, claim,
 
 ## Problem Statement
 
-Misinformation spreads faster than corrections, especially on WhatsApp, Telegram, and social media. Most fact-checking tools require you to already know what to search for. SatyaCheck lets you paste any text, URL, or image and get an immediate, reasoned verdict.
+Misinformation spreads faster than corrections, especially on WhatsApp, Telegram, and social media. Most fact-checking 
+tools require you to already know what to search for. SatyaCheck lets you paste any text, URL, or image and get an 
+immediate, reasoned verdict.
 
 ---
 
 ## Key Features
 
-- **Multi-model analysis**: GPT and Gemini check a claim independently; Claude synthesizes both into a final verdict
+- **Powered by Gemini 2.5 Flash for complete claim verification, synthesis, and streaming chat.
 - **Source credibility checker**: Rate any news source or domain by trustworthiness
 - **Real-time chat**: Ask follow-up questions about any claim
 - **Daily quiz**: 10-question misinformation quiz, regenerated every 24 hours
@@ -27,26 +32,10 @@ Misinformation spreads faster than corrections, especially on WhatsApp, Telegram
 
 ## How the Detection Works
 
-```
-User Input (text / URL / image)
-        │
-        ▼
-┌─────────────────┐    ┌─────────────────┐
-│  GPT (OpenAI)   │    │ Gemini (Google) │
-│  Primary check  │    │ Verification    │
-└────────┬────────┘    └────────┬────────┘
-         │                     │
-         └──────────┬──────────┘
-                    ▼
-         ┌──────────────────┐
-         │ Claude (Anthropic)│
-         │ Synthesis + stream│
-         └──────────────────┘
-```
-
-- GPT extracts claims, runs initial fact assessment
-- Gemini independently verifies each claim with its own web knowledge
-- Claude receives both results and synthesizes a final verdict, streamed token-by-token to the UI
+- The user inputs text, a URL, or an image.
+- The system extracts the most specific, verifiable factual claims.
+- Gemini independently verifies each claim with its own knowledge base.
+- A final synthesized verdict is streamed to the UI.
 
 ---
 
@@ -54,9 +43,8 @@ User Input (text / URL / image)
 
 | Role | Model | Purpose |
 |------|-------|---------|
-| Primary | GPT-5.2 (OpenAI) | Claim extraction, initial analysis, quiz, trending |
-| Secondary | Gemini 2.5 Flash (Google) | Independent verification, image analysis |
-| Synthesizer | Claude Sonnet 4.6 (Anthropic) | Final verdict generation, streaming chat |
+| All Analysis | Gemini 2.5 Flash (Google) | Claim extraction, verification, streaming chat, credibility, quiz, 
+trending |
 
 ---
 
@@ -70,7 +58,7 @@ User Input (text / URL / image)
 
 **Backend**
 - Node.js, Express 5, TypeScript
-- OpenAI SDK, Google GenAI SDK, Anthropic SDK
+- Google GenAI SDK
 - Drizzle ORM with PostgreSQL
 - Pino for structured logging
 - esbuild for production bundling
@@ -134,9 +122,7 @@ cp .env.example .env
 |----------|----------|-------------|
 | `PORT` | No | API server port (default: 3000) |
 | `DATABASE_URL` | Yes | PostgreSQL connection string |
-| `OPENAI_API_KEY` | Yes | OpenAI API key |
 | `GEMINI_API_KEY` | Yes | Google AI Studio API key |
-| `ANTHROPIC_API_KEY` | Yes | Anthropic API key |
 
 ---
 
@@ -168,8 +154,8 @@ The backend serves the frontend static files in production from `artifacts/fake-
 
 1. Go to the **Detect** page
 2. Paste a claim: *"Drinking bleach cures COVID-19"*
-3. Click **Check** — GPT and Gemini run in parallel
-4. Claude streams a verdict with reasoning and red flags
+3. Click **Check** — Gemini runs a full contextual analysis to determine the credibility of claims.
+4. Gemini streams a verdict with reasoning and red flags.
 5. Use **Chat** to ask follow-up questions
 
 ---
@@ -197,4 +183,8 @@ The backend serves the frontend static files in production from `artifacts/fake-
 
 Built by Shivam Rana as a college final-year project.
 
-AI tools (GitHub Copilot, Claude) were used for scaffolding boilerplate, generating UI components, and debugging. The project architecture, multi-model integration design, prompt engineering, and implementation decisions were developed and organized by the project author.
+AI tools (GitHub Copilot, Claude) were used for scaffolding boilerplate, generating UI components, and debugging. The 
+project architecture, multi-model integration design, prompt engineering, and implementation decisions were developed 
+and organized by the project author.
+
+
