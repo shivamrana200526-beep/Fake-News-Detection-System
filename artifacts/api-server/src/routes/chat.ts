@@ -1,27 +1,13 @@
 import { Router, type IRouter } from "express";
-import { anthropic } from "../lib/anthropic";
-import { db, conversations, messages } from "@workspace/db";
-import OpenAI from "openai";
 import { GoogleGenAI } from "@google/genai";
+import { db, conversations, messages } from "@workspace/db";
 import { scrapeUrl } from "../lib/scraper.js";
 
 const router: IRouter = Router();
 
-const openai = new OpenAI({
-  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.OPENAI_API_KEY,
-  ...(process.env.AI_INTEGRATIONS_OPENAI_BASE_URL
-    ? { baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL }
-    : {}),
-});
-
 const geminiAI = new GoogleGenAI({
-  apiKey: process.env.AI_INTEGRATIONS_GEMINI_API_KEY || process.env.GEMINI_API_KEY,
-  ...(process.env.AI_INTEGRATIONS_GEMINI_BASE_URL
-    ? { httpOptions: { apiVersion: "", baseUrl: process.env.AI_INTEGRATIONS_GEMINI_BASE_URL } }
-    : {}),
+  apiKey: process.env.GEMINI_API_KEY || process.env.AI_INTEGRATIONS_GEMINI_API_KEY,
 });
-
-// ── Claim detection ──────────────────────────────────────────────────────────
 
 function detectClaim(text: string): boolean {
   if (text.length < 8) return false;
@@ -39,25 +25,18 @@ function isLongContent(text: string): boolean {
   return text.length > 300 || text.split(/[.!?]+/).filter((s) => s.trim().length > 20).length >= 4;
 }
 
-// ── Claim extraction from long text ─────────────────────────────────────────
-
 async function extractClaims(text: string): Promise<string[]> {
   try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-5.2",
-      messages: [
-        {
-          role: "system",
-          content: `Extract the top 3-5 most specific, verifiable factual claims from the given text. 
-Each claim should be a single sentence that can be fact-checked independently.
-Return ONLY a JSON array of strings: ["claim1", "claim2", "claim3"]
-Focus on claims about facts, statistics, events, quotes, or scientific assertions — not opinions.`,
-        },
-        { role: "user", content: `Extract verifiable claims from:\n\n"${text.substring(0, 2000)}"` },
-      ],
-      max_completion_tokens: 400,
+    const response = await geminiAI.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: [{
+        role: "user",
+        parts: [{
+          text: `Extract the top 3-5 most specific, verifiable factual claims from the given text.\nEach claim should be a single sentence that can be fact-checked independently.\nReturn ONLY a JSON array of strings: ["claim1", "claim2", "claim3"]\nFocus on claims about facts, statistics, events, quotes, or scientific assertions — not opinions.\n\nExtract verifiable claims from:\n\n"${text.substring(0, 2000)}"`
+        }]
+      }]
     });
-    const raw = completion.choices[0]?.message?.content?.trim() || "[]";
+    const raw = (response.text ?? "").trim() || "[]";
     const match = raw.match(/\[[\s\S]*\]/);
     const claims = match ? JSON.parse(match[0]) : [];
     return Array.isArray(claims) ? claims.slice(0, 5).filter((c) => typeof c === "string" && c.length > 10) : [];
@@ -66,65 +45,18 @@ Focus on claims about facts, statistics, events, quotes, or scientific assertion
   }
 }
 
-// ── Single claim analysis ────────────────────────────────────────────────────
-
 async function analyzeOneClaim(claim: string): Promise<{
   claim: string;
-  gpt: any;
   gemini: any;
   consensus: string;
   confidence: number;
 }> {
-  const [gptRes, geminiRes] = await Promise.allSettled([
-    runGPTAnalysis(claim),
-    runGeminiAnalysis(claim),
-  ]);
+  const gemini = await runGeminiAnalysis(claim);
+  const verdict = gemini?.verdict || "Unverifiable";
+  const confidence = gemini?.confidence || 50;
 
-  const gpt = gptRes.status === "fulfilled" ? gptRes.value : null;
-  const gemini = geminiRes.status === "fulfilled" ? geminiRes.value : null;
-
-  const verdicts = [gpt?.verdict, gemini?.verdict].filter(Boolean);
-  const confidences = [gpt?.confidence, gemini?.confidence].filter((c) => typeof c === "number");
-  const avgConf = confidences.length
-    ? Math.round(confidences.reduce((a, b) => a + b, 0) / confidences.length)
-    : 50;
-  const counts: Record<string, number> = {};
-  verdicts.forEach((v) => { counts[v] = (counts[v] || 0) + 1; });
-  const consensus = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || "Unverifiable";
-
-  return { claim, gpt, gemini, consensus, confidence: avgConf };
+  return { claim, gemini, consensus: verdict, confidence };
 }
-
-// ── GPT analysis ─────────────────────────────────────────────────────────────
-
-async function runGPTAnalysis(claim: string): Promise<any> {
-  const completion = await openai.chat.completions.create({
-    model: "gpt-5.2",
-    messages: [
-      {
-        role: "system",
-        content: `You are an expert fact-checker. Analyze the following claim and return ONLY valid JSON:
-{
-  "verdict": "Real" | "Fake" | "Misleading" | "Unverifiable",
-  "confidence": <0-100>,
-  "summary": "<2-3 sentence explanation>",
-  "factPoints": [{ "point": "<specific fact>", "status": "verified" | "false" | "disputed" | "unknown" }],
-  "redFlags": ["<red flag if any>"],
-  "manipulationTactic": "<dominant manipulation tactic used, or null>",
-  "howToVerify": "<one practical self-verification tip>"
-}
-Include 3-5 factPoints. Be precise.`,
-      },
-      { role: "user", content: `Analyze: "${claim.substring(0, 1200)}"` },
-    ],
-    max_completion_tokens: 700,
-  });
-  const raw = completion.choices[0]?.message?.content?.trim() || "{}";
-  const match = raw.match(/\{[\s\S]*\}/);
-  return match ? JSON.parse(match[0]) : null;
-}
-
-// ── Gemini analysis ──────────────────────────────────────────────────────────
 
 async function runGeminiAnalysis(claim: string): Promise<any> {
   const response = await geminiAI.models.generateContent({
@@ -132,16 +64,18 @@ async function runGeminiAnalysis(claim: string): Promise<any> {
     contents: [{
       role: "user",
       parts: [{
-        text: `You are an independent fact-checker. Analyze this claim and return ONLY valid JSON:
+        text: `You are an expert fact-checker. Analyze the following claim and return ONLY valid JSON:
 {
   "verdict": "Real" | "Fake" | "Misleading" | "Unverifiable",
   "confidence": <0-100>,
   "summary": "<2-3 sentence explanation>",
   "factPoints": [{ "point": "<specific fact>", "status": "verified" | "false" | "disputed" | "unknown" }],
   "contextNote": "<important background context>",
-  "logicalIssue": "<logical fallacy or reasoning problem, if any>"
+  "logicalIssue": "<logical fallacy or reasoning problem, if any>",
+  "redFlags": ["<red flag if any>"],
+  "manipulationTactic": "<dominant manipulation tactic used, or null>"
 }
-Include 3-5 factPoints. Claim: "${claim.substring(0, 1200)}"`,
+Include 3-5 factPoints. Claim: "${claim.substring(0, 1200)}"`
       }],
     }],
   });
@@ -150,13 +84,10 @@ Include 3-5 factPoints. Claim: "${claim.substring(0, 1200)}"`,
   return match ? JSON.parse(match[0]) : null;
 }
 
-// ── Claude system prompt builder ─────────────────────────────────────────────
-
-function buildClaudePrompt(
-  gpt: any | null,
+function buildPrompt(
   gemini: any | null,
   isClaim: boolean,
-  claimBreakdowns?: Array<{ claim: string; consensus: string; confidence: number; gpt: any; gemini: any }>,
+  claimBreakdowns?: Array<{ claim: string; consensus: string; confidence: number; gemini: any }>,
   scrapedContext?: string
 ): string {
   const base = `You are SatyaCheck AI — a razor-sharp, friendly expert in fact-checking and misinformation research. "Satya" means Truth in Sanskrit.
@@ -184,7 +115,7 @@ Your mission: Help users understand whether news, claims, and viral content is r
   }
 
   if (isClaim || claimBreakdowns?.length) {
-    sections.push("\n## TRIPLE-AI ANALYSIS RESULTS:");
+    sections.push("\n## AI ANALYSIS RESULTS:");
   }
 
   if (claimBreakdowns && claimBreakdowns.length > 1) {
@@ -192,41 +123,25 @@ Your mission: Help users understand whether news, claims, and viral content is r
     sections.push("The user's content contains multiple verifiable claims. Here is each analyzed independently:\n");
     claimBreakdowns.forEach((cb, i) => {
       sections.push(`**Claim ${i + 1}:** "${cb.claim}"`);
-      sections.push(`  Consensus: ${cb.consensus} (${cb.confidence}% confidence)`);
-      if (cb.gpt) sections.push(`  GPT-5 says: ${cb.gpt.verdict} — ${cb.gpt.summary}`);
-      if (cb.gemini) sections.push(`  Gemini says: ${cb.gemini.verdict} — ${cb.gemini.summary}`);
-      if (cb.gpt?.redFlags?.length) sections.push(`  Red flags: ${cb.gpt.redFlags.join(", ")}`);
-      if (cb.gemini?.logicalIssue) sections.push(`  Logical issue: ${cb.gemini.logicalIssue}`);
+      if (cb.gemini) {
+        sections.push(`  Verdict: ${cb.gemini.verdict} (${cb.gemini.confidence}% confidence) — ${cb.gemini.summary}`);
+        if (cb.gemini.redFlags?.length) sections.push(`  Red flags: ${cb.gemini.redFlags.join(", ")}`);
+        if (cb.gemini.logicalIssue) sections.push(`  Logical issue: ${cb.gemini.logicalIssue}`);
+      }
       sections.push("");
     });
     sections.push("Synthesize all claims into a clear verdict on the content as a whole. Address each claim by number.");
-  } else if (gpt || gemini) {
-    if (gpt) {
-      sections.push(`\n### GPT-5 Analysis: ${gpt.verdict} (${gpt.confidence}% confidence)`);
-      sections.push(`Summary: ${gpt.summary}`);
-      if (gpt.factPoints?.length) {
-        sections.push("Key facts:");
-        gpt.factPoints.forEach((fp: any) => sections.push(`  - [${fp.status?.toUpperCase()}] ${fp.point}`));
-      }
-      if (gpt.redFlags?.length) sections.push(`Red flags: ${gpt.redFlags.join(", ")}`);
-      if (gpt.manipulationTactic) sections.push(`Manipulation tactic: ${gpt.manipulationTactic}`);
+  } else if (gemini) {
+    sections.push(`\n### Analysis: ${gemini.verdict} (${gemini.confidence}% confidence)`);
+    sections.push(`Summary: ${gemini.summary}`);
+    if (gemini.factPoints?.length) {
+      sections.push("Key facts:");
+      gemini.factPoints.forEach((fp: any) => sections.push(`  - [${fp.status?.toUpperCase()}] ${fp.point}`));
     }
-    if (gemini) {
-      sections.push(`\n### Gemini Analysis: ${gemini.verdict} (${gemini.confidence}% confidence)`);
-      sections.push(`Summary: ${gemini.summary}`);
-      if (gemini.factPoints?.length) {
-        sections.push("Key facts:");
-        gemini.factPoints.forEach((fp: any) => sections.push(`  - [${fp.status?.toUpperCase()}] ${fp.point}`));
-      }
-      if (gemini.contextNote) sections.push(`Context: ${gemini.contextNote}`);
-      if (gemini.logicalIssue) sections.push(`Logical issue: ${gemini.logicalIssue}`);
-    }
-
-    const verdicts = [gpt?.verdict, gemini?.verdict].filter(Boolean);
-    const counts: Record<string, number> = {};
-    verdicts.forEach((v) => { counts[v] = (counts[v] || 0) + 1; });
-    const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
-    if (top) sections.push(`\n### Consensus: ${top[0]} (${top[1]}/${verdicts.length} AIs agree)`);
+    if (gemini.contextNote) sections.push(`Context: ${gemini.contextNote}`);
+    if (gemini.logicalIssue) sections.push(`Logical issue: ${gemini.logicalIssue}`);
+    if (gemini.redFlags?.length) sections.push(`Red flags: ${gemini.redFlags.join(", ")}`);
+    if (gemini.manipulationTactic) sections.push(`Manipulation tactic: ${gemini.manipulationTactic}`);
   }
 
   sections.push("\nSynthesize all perspectives into one clear, well-reasoned, conversational response. Don't mechanically list AI outputs — guide the user to the truth with specific evidence and clear reasoning.");
@@ -234,12 +149,10 @@ Your mission: Help users understand whether news, claims, and viral content is r
   return sections.join("\n");
 }
 
-// ── Route ─────────────────────────────────────────────────────────────────────
-
 router.post("/chat", async (req, res) => {
-  const { messages } = req.body;
+  const { messages: rawMessages } = req.body;
 
-  if (!messages || !Array.isArray(messages) || messages.length === 0) {
+  if (!rawMessages || !Array.isArray(rawMessages) || rawMessages.length === 0) {
     return res.status(400).json({ message: "messages array is required" });
   }
 
@@ -249,22 +162,20 @@ router.post("/chat", async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
 
   try {
-    const chatMessages = messages
-      .filter((m: any) => m.role === "user" || m.role === "assistant")
-      .map((m: any) => ({ role: m.role as "user" | "assistant", content: m.content as string }));
+    const chatMessages = rawMessages
+      .filter((m: any) => m.role === "user" || m.role === "model" || m.role === "assistant")
+      .map((m: any) => ({ role: m.role === "user" ? "user" : "model", text: m.content as string }));
 
-    const lastUserMsg = chatMessages.findLast((m: any) => m.role === "user")?.content || "";
+    const lastUserMsg = chatMessages[chatMessages.length - 1]?.text || "";
 
-    let gptResult: any = null;
     let geminiResult: any = null;
-    let claimBreakdowns: Array<{ claim: string; consensus: string; confidence: number; gpt: any; gemini: any }> = [];
+    let claimBreakdowns: Array<{ claim: string; consensus: string; confidence: number; gemini: any }> = [];
     let scrapedContext: string | undefined;
     const isClaim = detectClaim(lastUserMsg) || isLongContent(lastUserMsg) || isUrl(lastUserMsg);
 
     if (isClaim && lastUserMsg.length > 8) {
       res.write(`data: ${JSON.stringify({ type: "analyzing", message: "SatyaCheck is investigating..." })}\n\n`);
 
-      // ── URL scraping ─────────────────────────────────────────────────────────
       if (isUrl(lastUserMsg)) {
         const url = lastUserMsg.trim().split(/\s/)[0];
         const scraped = await scrapeUrl(url).catch(() => null);
@@ -287,7 +198,6 @@ router.post("/chat", async (req, res) => {
         }
       }
 
-      // ── Multi-claim decomposition for long content ────────────────────────────
       const textToAnalyze = scrapedContext
         ? `${scrapedContext.substring(0, 2000)}`
         : lastUserMsg;
@@ -298,55 +208,28 @@ router.post("/chat", async (req, res) => {
 
         if (claims.length >= 2) {
           res.write(`data: ${JSON.stringify({ type: "analyzing", message: `Verifying ${claims.length} claims independently...` })}\n\n`);
-          // Verify all claims in parallel (up to 4 to avoid rate limits)
           const results = await Promise.allSettled(claims.slice(0, 4).map((c) => analyzeOneClaim(c)));
           claimBreakdowns = results
             .filter((r) => r.status === "fulfilled")
             .map((r: any) => r.value);
 
-          // Use the first claim's result as the primary for the verdict card
           if (claimBreakdowns.length > 0) {
-            gptResult = claimBreakdowns[0].gpt;
             geminiResult = claimBreakdowns[0].gemini;
           }
         } else {
-          // Single short claim — run both AIs in parallel
-          const [gptS, geminiS] = await Promise.allSettled([
-            runGPTAnalysis(textToAnalyze.substring(0, 1200)),
-            runGeminiAnalysis(textToAnalyze.substring(0, 1200)),
-          ]);
-          if (gptS.status === "fulfilled") gptResult = gptS.value;
-          if (geminiS.status === "fulfilled") geminiResult = geminiS.value;
+          geminiResult = await runGeminiAnalysis(textToAnalyze.substring(0, 1200));
         }
       } else {
-        const [gptS, geminiS] = await Promise.allSettled([
-          runGPTAnalysis(lastUserMsg),
-          runGeminiAnalysis(lastUserMsg),
-        ]);
-        if (gptS.status === "fulfilled") gptResult = gptS.value;
-        if (geminiS.status === "fulfilled") geminiResult = geminiS.value;
+        geminiResult = await runGeminiAnalysis(lastUserMsg);
       }
 
-      // ── Build verdict card ───────────────────────────────────────────────────
-      const verdicts = [
-        ...claimBreakdowns.map((c) => c.consensus),
-        gptResult?.verdict,
-        geminiResult?.verdict,
-      ].filter(Boolean);
+      const avgConfidence = claimBreakdowns.length > 0
+        ? Math.round(claimBreakdowns.reduce((sum, cb) => sum + cb.confidence, 0) / claimBreakdowns.length)
+        : geminiResult?.confidence || 0;
 
-      const confidences = [
-        ...claimBreakdowns.map((c) => c.confidence),
-        gptResult?.confidence,
-        geminiResult?.confidence,
-      ].filter((c): c is number => typeof c === "number");
-
-      const avgConfidence = confidences.length
-        ? Math.round(confidences.reduce((a, b) => a + b, 0) / confidences.length)
-        : 0;
-
-      const counts: Record<string, number> = {};
-      verdicts.forEach((v) => { counts[v] = (counts[v] || 0) + 1; });
-      const consensusVerdict = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || "Unverifiable";
+      const consensusVerdict = claimBreakdowns.length > 0
+        ? claimBreakdowns[0].consensus
+        : geminiResult?.verdict || "Unverifiable";
 
       res.write(`data: ${JSON.stringify({
         type: "verdict",
@@ -362,16 +245,6 @@ router.post("/chat", async (req, res) => {
                 confidence: cb.confidence,
               }))
             : undefined,
-          gpt: gptResult
-            ? {
-                verdict: gptResult.verdict,
-                confidence: gptResult.confidence,
-                summary: gptResult.summary,
-                factPoints: gptResult.factPoints?.slice(0, 4) || [],
-                redFlags: gptResult.redFlags || [],
-                manipulationTactic: gptResult.manipulationTactic || null,
-              }
-            : null,
           gemini: geminiResult
             ? {
                 verdict: geminiResult.verdict,
@@ -386,25 +259,31 @@ router.post("/chat", async (req, res) => {
       })}\n\n`);
     }
 
-    // ── Stream Claude's synthesis ─────────────────────────────────────────────
-    const system = buildClaudePrompt(
-      gptResult,
+    const systemText = buildPrompt(
       geminiResult,
       isClaim,
       claimBreakdowns.length > 1 ? claimBreakdowns : undefined,
       scrapedContext
     );
 
-    const stream = anthropic.messages.stream({
-      model: "claude-sonnet-4-6",
-      max_tokens: 8192,
-      system,
-      messages: chatMessages,
+    const history = chatMessages.slice(0, -1).map((m: any) => ({
+      role: m.role,
+      parts: [{ text: m.text }]
+    }));
+    
+    const contents = [
+      ...history,
+      { role: "user", parts: [{ text: `${systemText}\n\nUser message: ${lastUserMsg}` }] }
+    ];
+
+    const responseStream = await geminiAI.models.generateContentStream({
+      model: "gemini-2.5-flash",
+      contents,
     });
 
-    for await (const event of stream) {
-      if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
-        res.write(`data: ${JSON.stringify({ type: "content", content: event.delta.text })}\n\n`);
+    for await (const chunk of responseStream) {
+      if (chunk.text) {
+        res.write(`data: ${JSON.stringify({ type: "content", content: chunk.text })}\n\n`);
       }
     }
 
