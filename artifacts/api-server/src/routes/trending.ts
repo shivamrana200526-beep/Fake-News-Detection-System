@@ -53,7 +53,7 @@ Return ONLY valid JSON:
 Include 2-3 redFlags per story. Make platforms realistic (1-3 per story). Vary severity levels.`,
         },
       ],
-      max_completion_tokens: 2000,
+      max_tokens: 2000,
     });
 
     const raw = completion.choices[0]?.message?.content?.trim() || "{}";

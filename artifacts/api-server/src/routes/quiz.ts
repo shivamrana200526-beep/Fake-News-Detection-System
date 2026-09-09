@@ -61,7 +61,7 @@ Rules:
 - Explanations must be factually accurate and educational`,
         },
       ],
-      max_completion_tokens: 3000,
+      max_tokens: 3000,
     });
 
     const raw = completion.choices[0]?.message?.content?.trim() || "{}";

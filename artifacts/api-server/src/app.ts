@@ -2,6 +2,7 @@ import express, { type Express } from "express";
 import cors from "cors";
 import pinoHttp from "pino-http";
 import path from "path";
+import { fileURLToPath } from "url";
 import router from "./routes";
 import { logger } from "./lib/logger";
 
@@ -35,7 +36,10 @@ app.use("/api", router);
 
 // In production, serve the built frontend and handle SPA routing
 if (process.env.NODE_ENV === "production") {
-  const staticPath = path.join(process.cwd(), "artifacts/fake-news-defense/dist/public");
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  // dist/index.mjs is in artifacts/api-server/dist
+  const staticPath = path.join(__dirname, "../../fake-news-defense/dist/public");
   app.use(express.static(staticPath));
   app.get(/^(?!\/api).*/, (_req, res) => {
     res.sendFile(path.join(staticPath, "index.html"));
