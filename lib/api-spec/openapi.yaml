@@ -1,0 +1,272 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Fake News Defense API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: analyze
+    description: News analysis operations
+  - name: stats
+    description: Statistics operations
+  - name: history
+    description: History operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /analyze:
+    post:
+      operationId: analyzeContent
+      tags: [analyze]
+      summary: Analyze news content
+      description: Analyze news content for fake news detection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalyzeRequest"
+      responses:
+        "200":
+          description: Analysis result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /stats:
+    get:
+      operationId: getStats
+      tags: [stats]
+      summary: Get statistics
+      description: Get statistics about analyzed content
+      responses:
+        "200":
+          description: Statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsResponse"
+  /history:
+    get:
+      operationId: getHistory
+      tags: [history]
+      summary: Get analysis history
+      description: Get recent analysis history
+      responses:
+        "200":
+          description: History
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Analysis"
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    AnalyzeRequest:
+      type: object
+      properties:
+        content:
+          type: string
+          minLength: 1
+        type:
+          type: string
+          enum: [text, url, headline, image, video]
+      required:
+        - content
+        - type
+    GeminiVerification:
+      type: object
+      nullable: true
+      properties:
+        verdict:
+          type: string
+        confidence:
+          type: number
+        reasoning:
+          type: string
+        channelCredibility:
+          type: string
+        factPoints:
+          type: array
+          items:
+            type: object
+            properties:
+              point:
+                type: string
+              status:
+                type: string
+                enum: [verified, disputed, "false", unknown]
+            required:
+              - point
+              - status
+      required:
+        - verdict
+        - confidence
+        - reasoning
+        - factPoints
+    FactBreakdownItem:
+      type: object
+      properties:
+        category:
+          type: string
+        detail:
+          type: string
+        status:
+          type: string
+          enum: [real, fake, misleading, unverified]
+      required:
+        - category
+        - detail
+        - status
+    VerifiedArticle:
+      type: object
+      properties:
+        title:
+          type: string
+        source:
+          type: string
+        url:
+          type: string
+        publishDate:
+          type: string
+        credibilityScore:
+          type: number
+      required:
+        - title
+        - source
+        - url
+        - publishDate
+        - credibilityScore
+    Analysis:
+      type: object
+      properties:
+        id:
+          type: integer
+        content:
+          type: string
+        sourceType:
+          type: string
+        prediction:
+          type: string
+        confidence:
+          type: integer
+        explanation:
+          type: string
+        keywords:
+          type: array
+          nullable: true
+          items:
+            type: string
+        detectedSource:
+          type: object
+          nullable: true
+          additionalProperties: true
+        additionalSources:
+          type: array
+          nullable: true
+          items:
+            type: object
+            additionalProperties: true
+        mediaType:
+          type: string
+          nullable: true
+        geminiVerification:
+          $ref: "#/components/schemas/GeminiVerification"
+        factBreakdown:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/FactBreakdownItem"
+        createdAt:
+          type: string
+          nullable: true
+      required:
+        - id
+        - content
+        - sourceType
+        - prediction
+        - confidence
+        - explanation
+    AnalysisResponse:
+      allOf:
+        - $ref: "#/components/schemas/Analysis"
+        - type: object
+          properties:
+            verifiedArticles:
+              type: array
+              items:
+                $ref: "#/components/schemas/VerifiedArticle"
+          required:
+            - verifiedArticles
+    StatsResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+        realCount:
+          type: integer
+        fakeCount:
+          type: integer
+        misleadingCount:
+          type: integer
+        trendingTopics:
+          type: array
+          items:
+            type: object
+            properties:
+              topic:
+                type: string
+              count:
+                type: integer
+            required:
+              - topic
+              - count
+      required:
+        - total
+        - realCount
+        - fakeCount
+        - misleadingCount
+        - trendingTopics
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
