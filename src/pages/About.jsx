@@ -10,7 +10,7 @@ const pillars = [
     {
         icon: <Layers className="h-6 w-6 text-violet-500"/>,
         title: "How It Works",
-        body: "SatyaCheck uses a dual-engine AI architecture. OpenAI's advanced reasoning provides deep textual and contextual analysis, cross-referenced with Google Gemini for independent verification and visual forensics. This multi-layered approach ensures rigorous, unbiased fact-checking you can trust."
+        body: "SatyaCheck uses a dual-engine AI architecture. Ollama (LLaMA 3.2) powers deep local text and image analysis with complete privacy — no content leaves your machine. Google Gemini provides independent verification and multimodal cross-referencing. This multi-layered approach ensures rigorous, unbiased fact-checking you can trust."
     },
     {
         icon: <Globe2 className="h-6 w-6 text-emerald-500"/>,
@@ -58,11 +58,11 @@ export default function About() {
           <div className="bg-card rounded-2xl border border-border p-6 space-y-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
-                <span className="text-green-600 font-bold text-sm">GPT</span>
+                <span className="text-green-600 font-bold text-xs">LLM</span>
               </div>
-              <h3 className="font-bold text-foreground">OpenAI</h3>
+              <h3 className="font-bold text-foreground">Ollama / LLaMA 3.2</h3>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">Primary analysis engine. Deep textual reasoning, contextual understanding, and sentiment analysis.</p>
+            <p className="text-sm text-muted-foreground leading-relaxed">Primary local analysis engine. Deep textual reasoning, forensic fact breakdown, manipulation scoring — all running privately on your machine.</p>
           </div>
           <div className="bg-card rounded-2xl border border-border p-6 space-y-3">
             <div className="flex items-center gap-3">

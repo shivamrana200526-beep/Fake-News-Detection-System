@@ -128,7 +128,7 @@ function VerdictCard({ data }) {
                 {data.gpt && (<div>
                     <div className="flex items-center gap-1.5 mb-2">
                       <span className="w-2 h-2 rounded-full bg-green-500"/>
-                      <span className="text-xs font-bold text-foreground">OpenAI GPT-5 Analysis</span>
+                      <span className="text-xs font-bold text-foreground">Ollama / LLaMA Analysis</span>
                     </div>
                     <p className="text-xs text-muted-foreground mb-2 leading-relaxed">{data.gpt.summary}</p>
                     {data.gpt.factPoints.length > 0 && (<div className="space-y-1">
