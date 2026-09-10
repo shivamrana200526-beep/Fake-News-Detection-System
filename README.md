@@ -1,4 +1,4 @@
-﻿# 🛡️ SatyaCheck — Fake News Detection & Verification System
+# 🛡️ SatyaCheck — Fake News Detection & Verification System
 
 > **सत्य** (*Satya*) means **Truth** in Sanskrit.
 > *Verify News. Build a More Informed World.*
@@ -124,11 +124,12 @@ The frontend is a pure client-side React SPA that communicates with a local Expr
 |---|---|---|
 | **Text Analysis** | Ollama + LLaMA 3.2 | Multi-dimensional forensic fact-checking |
 | **Image Analysis** | Ollama + LLaVA (vision) | Visual manipulation detection in images/screenshots |
+| **Independent Verification** | Google Gemini | Cross-referencing, multimodal analysis, and secondary verdict validation |
 | **URL Scraping** | Custom scraper (Node.js) | Extracts article body, title, author, publish date |
 | **Chat** | Ollama (streaming SSE) | Real-time conversational fact-checking assistant |
-| **Credibility** | Ollama | Domain/source trust scoring |
+| **Credibility** | Ollama + Google Gemini | Domain/source trust scoring with AI-powered reasoning |
 
-> **Privacy note:** All AI inference runs locally via Ollama. Your submitted content is never sent to any third-party cloud service.
+> **Dual-engine architecture:** Ollama (LLaMA 3.2) serves as the primary local analysis engine, while Google Gemini provides independent verification and multimodal cross-referencing — two independent AI systems, one unified verdict.
 
 ---
 
@@ -159,6 +160,7 @@ The frontend is a pure client-side React SPA that communicates with a local Expr
 | Ollama | Local LLM runtime |
 | LLaMA 3.2 | Text fact-checking model |
 | LLaVA | Vision model for image analysis |
+| Google Gemini | Independent verification and multimodal cross-referencing |
 | Drizzle ORM + SQLite | Persistent analysis storage |
 
 ---
