@@ -128,24 +128,24 @@ export default function Trending() {
     return (<div className="container mx-auto max-w-3xl px-4 py-10">
       {/* Header */}
       <div className="mb-8 text-center">
-        <div className="flex items-center justify-center gap-2 mb-3">
-          <TrendingUp className="h-5 w-5 text-primary"/>
-          <span className="text-sm font-semibold text-primary uppercase tracking-wider">Trending Now</span>
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <TrendingUp className="h-4 w-4 text-primary"/>
+          <span className="text-xs font-semibold text-primary uppercase tracking-wider">Misinformation Wire</span>
         </div>
-        <h1 className="text-4xl font-bold text-foreground mb-2">Viral Misinformation Tracker</h1>
-        <p className="text-muted-foreground max-w-lg mx-auto">
-          Live-updated list of fake news and misleading stories currently spreading across social media and messaging apps.
+        <h1 className="text-3xl font-serif font-bold text-foreground mb-2">Monitored Misinformation Tracker</h1>
+        <p className="text-muted-foreground text-sm max-w-lg mx-auto">
+          Catalog of circulating rumors, misleading claims, and viral fabrications tracked across open social channels.
         </p>
-        {generatedAt && (<p className="text-xs text-muted-foreground/60 mt-2">
-            Last updated: {new Date(generatedAt).toLocaleTimeString()}
+        {generatedAt && (<p className="text-xs text-muted-foreground/60 mt-2 font-mono">
+            Updated: {new Date(generatedAt).toLocaleTimeString()}
           </p>)}
       </div>
 
       {/* Controls */}
       {stories.length > 0 && (<div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-          <div className="flex flex-wrap gap-2">
-            {categories.map((cat) => (<button key={cat} onClick={() => setFilter(cat)} className={cn("text-xs px-3 py-1.5 rounded-full border transition-all font-medium", filter === cat
-                    ? "satya-gradient text-white border-transparent shadow-sm"
+          <div className="flex flex-wrap gap-1.5">
+            {categories.map((cat) => (<button key={cat} onClick={() => setFilter(cat)} className={cn("text-xs px-3 py-1 rounded-md border transition-colors font-medium", filter === cat
+                    ? "bg-primary text-primary-foreground border-transparent"
                     : "border-border bg-muted/40 text-muted-foreground hover:bg-muted")}>
                 {cat}
               </button>))}

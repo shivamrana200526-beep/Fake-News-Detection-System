@@ -98,26 +98,21 @@ You will see output similar to:
 
 ## ⚙️ Connecting to Backend API
 
-By default, `vite.config.js` is configured to proxy all `/api/*` requests to your backend at `http://127.0.0.1:3000`:
+By default, `vite.config.js` proxies all `/api/*` calls directly to your backend server at `http://127.0.0.1:3000`:
 
 ```javascript
 server: {
   port: 5173,
   proxy: {
     "/api": {
-      target: process.env.VITE_API_BASE_URL || "http://127.0.0.1:3000",
+      target: "http://127.0.0.1:3000",
       changeOrigin: true,
     },
   },
 }
 ```
 
-If your backend is running on a different port or host, you can either:
-- Update the target URL in `vite.config.js`, or
-- Create a `.env` file in `frontend-js` and add:
-  ```env
-  VITE_API_BASE_URL=http://localhost:3000
-  ```
+No `.env` file or environment variables are needed. If your backend runs on a different port, update the `target` URL directly in `vite.config.js`.
 
 ---
 

@@ -81,35 +81,35 @@ export default function Forward() {
           <MessageCircle className="h-5 w-5 text-primary"/>
           <span className="text-sm font-semibold text-primary uppercase tracking-wider">Forward Checker</span>
         </div>
-        <h1 className="text-4xl font-bold text-foreground mb-2">Check a Forwarded Message</h1>
-        <p className="text-muted-foreground max-w-lg mx-auto">
-          Paste any message you received on WhatsApp, Telegram, or social media. We'll instantly fact-check it with triple AI.
+        <h1 className="text-3xl font-serif font-bold text-foreground mb-2">Inspect a Forwarded Message</h1>
+        <p className="text-muted-foreground text-sm max-w-lg mx-auto">
+          Paste any viral message received on WhatsApp, Telegram, or social media for instant claim verification.
         </p>
       </div>
 
       {/* Input card */}
-      <Card className="border-border/60 shadow-lg mb-5">
-        <CardContent className="p-4">
+      <Card className="border-border shadow-xs mb-5">
+        <CardContent className="p-5">
           {/* WhatsApp-like header */}
-          <div className="flex items-center gap-2 mb-3 pb-3 border-b border-border/40">
+          <div className="flex items-center gap-2.5 mb-3 pb-3 border-b border-border">
             <div className="w-8 h-8 rounded-full bg-[#25D366] flex items-center justify-center">
               <MessageCircle className="h-4 w-4 text-white"/>
             </div>
             <div>
-              <p className="text-xs font-semibold text-foreground">WhatsApp / Telegram / SMS</p>
-              <p className="text-xs text-muted-foreground">Paste a forwarded message below</p>
+              <p className="text-xs font-semibold text-foreground">Messaging App & SMS Ingestion</p>
+              <p className="text-[11px] text-muted-foreground">Strips forwarding noise and evaluates claims</p>
             </div>
           </div>
 
           <Textarea value={message} onChange={(e) => { setMessage(e.target.value); if (result)
-        reset(); }} placeholder="Paste the forwarded message here... e.g. 'URGENT: Scientists confirm that...' or any viral news message you received" className="resize-none border-0 shadow-none focus-visible:ring-0 min-h-[120px] bg-transparent text-sm p-0" rows={4}/>
+        reset(); }} placeholder="Paste the forwarded message here... e.g. 'URGENT: Scientists confirm that...' or any viral claim you received" className="resize-none border-0 shadow-none focus-visible:ring-0 min-h-[110px] bg-transparent text-sm p-0" rows={4}/>
 
           {/* Forwarding signals live detector */}
           <AnimatePresence>
             {message.length > 20 && signals.length > 0 && !result && (<motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="mt-3 overflow-hidden">
-                <div className="border-t border-border/40 pt-3">
+                <div className="border-t border-border pt-3">
                   <p className="text-xs font-semibold text-amber-600 dark:text-amber-400 mb-1.5">
-                    ⚠️ {signals.length} red flag{signals.length > 1 ? "s" : ""} detected automatically:
+                    ⚠️ {signals.length} rhetorical red flag{signals.length > 1 ? "s" : ""} detected:
                   </p>
                   <ul className="space-y-1">
                     {signals.map((s, i) => (<li key={i} className="text-xs text-muted-foreground flex items-start gap-1.5">
@@ -120,11 +120,11 @@ export default function Forward() {
               </motion.div>)}
           </AnimatePresence>
 
-          <div className="flex items-center justify-between mt-3 pt-3 border-t border-border/40">
-            <span className="text-xs text-muted-foreground">{message.length} chars</span>
-            <Button onClick={analyze} disabled={isPending || !cleaned.trim()} className="satya-gradient border-0 rounded-xl gap-2 shadow-md">
+          <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
+            <span className="text-xs text-muted-foreground font-mono">{message.length} chars</span>
+            <Button onClick={analyze} disabled={isPending || !cleaned.trim()} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-md gap-2 shadow-xs text-xs h-9 font-medium">
               {isPending ? <Loader2 className="h-4 w-4 animate-spin"/> : <Send className="h-4 w-4"/>}
-              {isPending ? "Analyzing..." : "Fact-Check This"}
+              {isPending ? "Analyzing..." : "Inspect Forward"}
             </Button>
           </div>
         </CardContent>

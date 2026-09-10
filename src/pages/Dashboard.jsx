@@ -22,11 +22,9 @@ export default function Dashboard() {
     const { data: history, isLoading: historyLoading } = useHistory();
     if (statsLoading || historyLoading) {
         return (<div className="container mx-auto max-w-7xl px-4 py-20 flex flex-col items-center justify-center min-h-[60vh]">
-        <div className="satya-gradient p-4 rounded-2xl mb-6 shadow-xl shadow-primary/20">
-          <Loader2 className="h-10 w-10 text-white animate-spin"/>
-        </div>
-        <h2 className="text-2xl font-bold text-primary">Compiling Global Data...</h2>
-        <p className="text-muted-foreground mt-2">Aggregating real-time analysis results</p>
+        <img src="/logo-mark.png" alt="SatyaCheck" className="h-12 w-auto mb-4 animate-pulse" />
+        <h2 className="text-xl font-serif font-bold text-foreground">Compiling Registry Data...</h2>
+        <p className="text-muted-foreground text-xs mt-1">Aggregating historical claims and verification records</p>
       </div>);
     }
     if (!stats || !history)
@@ -133,8 +131,8 @@ export default function Dashboard() {
                   <XAxis type="number" hide/>
                   <YAxis dataKey="topic" type="category" axisLine={false} tickLine={false} width={90} style={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}/>
                   <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))' }}/>
-                  <Bar dataKey="count" radius={[0, 6, 6, 0]} barSize={20}>
-                    {(stats.trendingTopics ?? []).map((_, index) => (<Cell key={`cell-${index}`} fill={`hsl(${245 + index * 15} 58% 55%)`}/>))}
+                  <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={18}>
+                    {(stats.trendingTopics ?? []).map((_, index) => (<Cell key={`cell-${index}`} fill={`hsl(148 ${45 + index * 4}% ${32 + index * 5}%)`}/>))}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>)}

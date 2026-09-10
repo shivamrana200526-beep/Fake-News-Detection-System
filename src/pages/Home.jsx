@@ -1,285 +1,331 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, ShieldCheck, Zap, BookOpen, BarChart3, ScanSearch, CheckCircle2, TrendingUp, Activity } from "lucide-react";
+import {
+  ArrowRight, ShieldCheck, Zap, BookOpen, BarChart3,
+  ScanSearch, CheckCircle2, TrendingUp, Activity, FileText,
+  AlertTriangle, Check, ShieldAlert, Globe, MessageSquare
+} from "lucide-react";
 import { motion, useMotionValue, useSpring, useInView } from "framer-motion";
 import { useStats } from "@/hooks/use-analysis";
 import { useEffect, useRef } from "react";
+
 function AnimatedCounter({ value, suffix = "" }) {
-    const ref = useRef(null);
-    const isInView = useInView(ref, { once: true });
-    const motionVal = useMotionValue(0);
-    const spring = useSpring(motionVal, { stiffness: 60, damping: 20 });
-    useEffect(() => {
-        if (isInView)
-            motionVal.set(value);
-    }, [isInView, value, motionVal]);
-    useEffect(() => {
-        return spring.on("change", (latest) => {
-            if (ref.current)
-                ref.current.textContent = Math.round(latest) + suffix;
-        });
-    }, [spring, suffix]);
-    return <span ref={ref}>0{suffix}</span>;
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+  const motionVal = useMotionValue(0);
+  const spring = useSpring(motionVal, { stiffness: 60, damping: 20 });
+
+  useEffect(() => {
+    if (isInView) motionVal.set(value);
+  }, [isInView, value, motionVal]);
+
+  useEffect(() => {
+    return spring.on("change", (latest) => {
+      if (ref.current) ref.current.textContent = Math.round(latest) + suffix;
+    });
+  }, [spring, suffix]);
+
+  return <span ref={ref}>0{suffix}</span>;
 }
-const features = [
-    {
-        icon: <Zap className="h-6 w-6 text-violet-500"/>,
-        title: "Instant Multi-Modal Analysis",
-        desc: "Paste text, URLs, headlines, or upload images. Our dual-AI engine processes content in seconds with deep contextual understanding.",
-        color: "from-violet-500/10 to-violet-500/5",
-        border: "border-violet-200 dark:border-violet-900"
-    },
-    {
-        icon: <ShieldCheck className="h-6 w-6 text-emerald-500"/>,
-        title: "Independent AI Verification",
-        desc: "Cross-checks claims using two distinct AI engines — OpenAI GPT and Google Gemini — for unbiased, doubly-verified results.",
-        color: "from-emerald-500/10 to-emerald-500/5",
-        border: "border-emerald-200 dark:border-emerald-900"
-    },
-    {
-        icon: <BarChart3 className="h-6 w-6 text-blue-500"/>,
-        title: "Live Transparency Dashboard",
-        desc: "Explore real-time trends, keyword patterns, and misinformation statistics on our fully transparent global analytics panel.",
-        color: "from-blue-500/10 to-blue-500/5",
-        border: "border-blue-200 dark:border-blue-900"
-    },
-    {
-        icon: <BookOpen className="h-6 w-6 text-orange-500"/>,
-        title: "Media Literacy Education",
-        desc: "Build critical thinking skills with curated guides on spotting deepfakes, understanding bias, and evaluating sources.",
-        color: "from-orange-500/10 to-orange-500/5",
-        border: "border-orange-200 dark:border-orange-900"
-    }
+
+const disciplines = [
+  {
+    icon: <FileText className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />,
+    title: "Multi-Modal Claim Ingestion",
+    desc: "Submit raw text, full article URLs, headlines, or uploaded screenshots. The system extracts core factual propositions for independent verification.",
+  },
+  {
+    icon: <ShieldCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />,
+    title: "Forensic Evidence Corroboration",
+    desc: "Cross-references claims against historical databases, accredited news archives, and primary sources with verifiable citations.",
+  },
+  {
+    icon: <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />,
+    title: "Manipulation & Bias Diagnostics",
+    desc: "Flags emotional appeals, false urgency, cherry-picked context, and specific logical fallacies designed to deceive.",
+  },
+  {
+    icon: <Globe className="h-5 w-5 text-blue-600 dark:text-blue-400" />,
+    title: "Domain Credibility Index",
+    desc: "Inspects publisher ownership, editorial corrections policy, and historical transparency ratings for thousands of news outlets.",
+  },
 ];
-const steps = [
-    { num: "01", title: "Submit Content", desc: "Paste text, a URL, a headline, or upload an image for analysis." },
-    { num: "02", title: "Dual-AI Evaluation", desc: "OpenAI and Gemini independently analyze the content for credibility." },
-    { num: "03", title: "Get Your Verdict", desc: "Receive a clear verdict — Real, Fake, or Misleading — with detailed reasoning." },
+
+const methodologySteps = [
+  {
+    num: "01",
+    title: "Submit & Parse",
+    desc: "Paste an article, headline, message, or image. The parser isolates discrete, testable factual assertions.",
+  },
+  {
+    num: "02",
+    title: "Forensic Analysis",
+    desc: "Each claim is evaluated across 10 forensic dimensions including source authority, timeline coherence, and emotional framing.",
+  },
+  {
+    num: "03",
+    title: "Auditable Verdict",
+    desc: "Receive a calibrated verdict — Real, Fake, or Misleading — accompanied by verified counter-evidence and source links.",
+  },
 ];
+
 export default function Home() {
-    const { data: stats } = useStats();
-    return (<div className="flex flex-col">
+  const { data: stats } = useStats();
+
+  return (
+    <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative overflow-hidden min-h-[92vh] flex items-center pt-20 pb-16 px-4">
-        {/* Background gradient */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/8 rounded-full blur-[120px] -translate-y-1/2"/>
-          <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-violet-400/8 rounded-full blur-[100px] translate-y-1/3"/>
-        </div>
-
+      <section className="relative border-b border-border/70 bg-gradient-to-b from-background to-muted/20 pt-16 pb-20 px-4 md:px-6">
         <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="flex flex-col gap-8">
-              <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold w-fit border border-primary/20">
-                <ScanSearch className="h-4 w-4"/>
-                <span>AI-Powered Fact Verification</span>
-              </motion.div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            {/* Left copy */}
+            <div className="lg:col-span-7 flex flex-col gap-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-muted text-foreground/80 text-xs font-medium border border-border w-fit">
+                <span className="w-2 h-2 rounded-full bg-emerald-600 inline-block" />
+                <span>Open-Access Fact-Checking & Media Literacy</span>
+              </div>
 
-              <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.08 }} className="text-5xl md:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.05]">
-                Truth Has a<br />
-                <span className="satya-text-gradient">New Guardian.</span>
-              </motion.h1>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold tracking-tight text-foreground leading-[1.12]">
+                Verify news, claims, and media in real time.
+              </h1>
 
-              <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.16 }} className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-lg">
-                <strong className="text-foreground font-semibold">SatyaCheck</strong> (<em>Satya</em> = Truth in Sanskrit) uses OpenAI + Gemini AI to instantly classify news, headlines, URLs, and images as Real, Fake, or Misleading.
-              </motion.p>
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
+                <strong>SatyaCheck</strong> provides multi-dimensional forensic analysis to detect misinformation, viral hoaxes, and manipulated content. Built to empower researchers, journalists, and everyday citizens.
+              </p>
 
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.24 }} className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <Link href="/detect">
-                  <Button size="lg" className="h-13 px-8 rounded-full shadow-lg hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5 satya-gradient border-0 text-base font-semibold">
-                    Start Analyzing <ArrowRight className="ml-2 h-5 w-5"/>
+                  <Button size="lg" className="h-11 px-6 rounded-md font-medium text-sm bg-primary text-primary-foreground hover:bg-primary/90 shadow-xs gap-2">
+                    Verify Content <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
                 <Link href="/dashboard">
-                  <Button variant="outline" size="lg" className="h-13 px-8 rounded-full border-2 text-base font-semibold hover:bg-muted transition-all duration-300">
-                    Live Dashboard
+                  <Button variant="outline" size="lg" className="h-11 px-6 rounded-md font-medium text-sm hover:bg-muted">
+                    Explore Live Data
                   </Button>
                 </Link>
-              </motion.div>
+              </div>
 
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.36 }} className="flex items-center gap-6 pt-2">
-                {[
-            { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500"/>, label: "No API key needed" },
-            { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500"/>, label: "Dual AI verification" },
-            { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500"/>, label: "Instant results" },
-        ].map((item, i) => (<div key={i} className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                    {item.icon}
-                    <span>{item.label}</span>
-                  </div>))}
-              </motion.div>
+              <div className="flex flex-wrap items-center gap-y-2 gap-x-6 pt-3 text-xs text-muted-foreground">
+                <div className="flex items-center gap-1.5">
+                  <Check className="h-4 w-4 text-emerald-600" />
+                  <span>Text, URLs & Screenshots</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Check className="h-4 w-4 text-emerald-600" />
+                  <span>10 Forensic Dimensions</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Check className="h-4 w-4 text-emerald-600" />
+                  <span>Auditable Evidence Citations</span>
+                </div>
+              </div>
             </div>
 
-            {/* Hero visual */}
-            <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.1 }} className="hidden lg:flex items-center justify-center">
-              <div className="relative w-full max-w-md">
-                <div className="satya-gradient rounded-3xl p-0.5 shadow-2xl shadow-primary/20">
-                  <div className="bg-card rounded-3xl p-8 space-y-5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">AI Verdict</span>
-                      <div className="flex gap-1.5">
-                        <div className="w-2.5 h-2.5 rounded-full bg-red-400"/>
-                        <div className="w-2.5 h-2.5 rounded-full bg-amber-400"/>
-                        <div className="w-2.5 h-2.5 rounded-full bg-green-400"/>
-                      </div>
+            {/* Right Dossier Card */}
+            <div className="lg:col-span-5 flex justify-center">
+              <div className="w-full max-w-md bg-card border border-border rounded-lg shadow-sm overflow-hidden">
+                {/* Header */}
+                <div className="bg-muted/50 border-b border-border px-4 py-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <img src="/logo-mark.png" alt="SatyaCheck" className="h-4 w-auto object-contain" />
+                    <span className="text-xs font-semibold tracking-wide uppercase text-foreground/80">Forensic Dossier #SC-8924</span>
+                  </div>
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-medium">
+                    Verified Real
+                  </span>
+                </div>
+
+                {/* Content */}
+                <div className="p-5 space-y-4">
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium mb-1">Claim Inspected</p>
+                    <p className="text-sm font-semibold text-foreground leading-snug">
+                      "Global renewable energy capacity expanded by a record 50% in the latest annual report."
+                    </p>
+                  </div>
+
+                  {/* Metrics grid */}
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <div className="p-2.5 rounded bg-muted/40 border border-border/60">
+                      <p className="text-[11px] text-muted-foreground">Confidence Metric</p>
+                      <p className="text-lg font-bold text-foreground">94% <span className="text-xs text-emerald-600 font-medium">(High)</span></p>
                     </div>
-                    <div className="flex items-center gap-3 p-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-2xl border border-emerald-200 dark:border-emerald-900">
-                      <ShieldCheck className="h-8 w-8 text-emerald-500 shrink-0"/>
-                      <div>
-                        <p className="font-bold text-emerald-700 dark:text-emerald-400 text-lg">VERIFIED REAL</p>
-                        <p className="text-sm text-emerald-600/70 dark:text-emerald-500/70">94% confidence score</p>
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <TrendingUp className="h-4 w-4 text-primary"/>
-                        <span>OpenAI analysis complete</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <TrendingUp className="h-4 w-4 text-violet-500"/>
-                        <span>Gemini verification: Agrees</span>
-                      </div>
-                    </div>
-                    <div className="p-4 bg-muted/50 rounded-xl text-sm text-muted-foreground leading-relaxed">
-                      "Sources corroborated. Factual claims verified against multiple databases. No signs of manipulation or bias detected."
+                    <div className="p-2.5 rounded bg-muted/40 border border-border/60">
+                      <p className="text-[11px] text-muted-foreground">Manipulation Score</p>
+                      <p className="text-lg font-bold text-foreground">04 <span className="text-xs text-muted-foreground font-normal">/ 100</span></p>
                     </div>
                   </div>
-                </div>
-                {/* Decorative floating badges */}
-                <div className="absolute -top-4 -right-6 bg-card border border-border rounded-2xl px-4 py-2 shadow-lg text-sm font-semibold text-destructive flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-destructive inline-block"/>
-                  Fake detected
-                </div>
-                <div className="absolute -bottom-4 -left-6 bg-card border border-border rounded-2xl px-4 py-2 shadow-lg text-sm font-semibold text-warning flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-warning inline-block"/>
-                  Misleading content
+
+                  {/* Fact breakdown items */}
+                  <div className="space-y-2 pt-1 border-t border-border/60">
+                    <p className="text-xs font-medium text-foreground">Forensic Breakdown</p>
+                    <div className="space-y-1.5 text-xs text-muted-foreground">
+                      <div className="flex items-start gap-2">
+                        <span className="text-emerald-600 mt-0.5">✓</span>
+                        <span>Corroborated by the International Energy Agency (IEA) official bulletin.</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-emerald-600 mt-0.5">✓</span>
+                        <span>Headline accurately reflects body context without sensationalist phrasing.</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-emerald-600 mt-0.5">✓</span>
+                        <span>No logical fallacies or emotional persuasion tactics identified.</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 text-[11px] text-muted-foreground border-t border-border/60 flex items-center justify-between">
+                    <span>Source: Verified International Agency</span>
+                    <Link href="/detect" className="text-primary hover:underline font-medium">
+                      Test a new claim →
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* Live Stats Bar */}
-      {stats && stats.total > 0 && (<motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="py-6 border-y border-border/50 bg-muted/20 px-4">
-          <div className="container mx-auto max-w-5xl">
-            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
+      {/* Live Platform Data Ticker */}
+      {stats && stats.total > 0 && (
+        <section className="border-b border-border bg-card py-4 px-4 md:px-6">
+          <div className="container mx-auto max-w-6xl">
+            <div className="flex flex-wrap items-center justify-between gap-6">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"/>
-                <span className="text-sm text-muted-foreground font-medium">Live platform data</span>
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Verification Wire
+                </span>
               </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold satya-text-gradient">
-                  <AnimatedCounter value={stats.total}/>
+
+              <div className="flex items-center gap-8 sm:gap-12 flex-wrap text-sm">
+                <div>
+                  <span className="text-xs text-muted-foreground mr-1.5">Total Ingested:</span>
+                  <span className="font-bold text-foreground font-mono">
+                    <AnimatedCounter value={stats.total} />
+                  </span>
                 </div>
-                <div className="text-xs text-muted-foreground flex items-center gap-1 justify-center"><Activity className="h-3 w-3"/>Total analyzed</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-emerald-500">
-                  <AnimatedCounter value={stats.realCount}/>
+                <div>
+                  <span className="text-xs text-muted-foreground mr-1.5">Confirmed Real:</span>
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+                    <AnimatedCounter value={stats.realCount} />
+                  </span>
                 </div>
-                <div className="text-xs text-muted-foreground">Verified real</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-destructive">
-                  <AnimatedCounter value={stats.fakeCount}/>
+                <div>
+                  <span className="text-xs text-muted-foreground mr-1.5">Identified Fake:</span>
+                  <span className="font-bold text-red-600 dark:text-red-400 font-mono">
+                    <AnimatedCounter value={stats.fakeCount} />
+                  </span>
                 </div>
-                <div className="text-xs text-muted-foreground">Detected fake</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-warning">
-                  <AnimatedCounter value={stats.misleadingCount}/>
+                <div>
+                  <span className="text-xs text-muted-foreground mr-1.5">Misleading Context:</span>
+                  <span className="font-bold text-amber-600 dark:text-amber-400 font-mono">
+                    <AnimatedCounter value={stats.misleadingCount} />
+                  </span>
                 </div>
-                <div className="text-xs text-muted-foreground">Misleading</div>
               </div>
             </div>
           </div>
-        </motion.section>)}
+        </section>
+      )}
 
-      {/* How it works */}
-      <section className="py-24 bg-muted/30 border-y border-border/50 px-4">
+      {/* Methodology: Three steps */}
+      <section className="py-16 md:py-20 px-4 md:px-6 bg-muted/30 border-b border-border/70">
         <div className="container mx-auto max-w-5xl">
-          <div className="text-center mb-16">
-            <span className="text-sm font-semibold text-primary uppercase tracking-widest mb-3 block">How It Works</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">Three steps to the truth</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {steps.map((step, i) => (<motion.div key={i} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12 }} className="text-center flex flex-col items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl satya-gradient flex items-center justify-center text-white font-bold text-xl font-serif shadow-lg shadow-primary/20">
-                  {step.num}
-                </div>
-                <h3 className="text-lg font-bold text-foreground">{step.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{step.desc}</p>
-              </motion.div>))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="py-24 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <span className="text-sm font-semibold text-primary uppercase tracking-widest mb-3 block">Capabilities</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Comprehensive truth detection</h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">A multi-layered approach to ensure the highest accuracy in identifying and explaining misinformation.</p>
+          <div className="max-w-xl mb-12">
+            <span className="text-xs font-semibold uppercase tracking-widest text-primary mb-2 block">
+              Methodology
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground">
+              A structured, evidence-based verification standard.
+            </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {features.map((feature, i) => (<motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }}>
-                <Card className={`h-full border ${feature.border} bg-gradient-to-br ${feature.color} hover:shadow-xl transition-all duration-300 group`}>
-                  <CardContent className="p-8 flex gap-5">
-                    <div className="p-3 rounded-xl bg-background/70 shadow-sm h-fit group-hover:scale-110 transition-transform duration-300">
-                      {feature.icon}
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <h3 className="text-lg font-bold text-foreground">{feature.title}</h3>
-                      <p className="text-muted-foreground leading-relaxed text-sm">{feature.desc}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>))}
-          </div>
-        </div>
-      </section>
-
-      {/* SDG Banner */}
-      <section className="py-16 px-4 bg-muted/20 border-y border-border/50">
-        <div className="container mx-auto max-w-4xl text-center space-y-6">
-          <span className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">Aligned with UN SDGs</span>
-          <div className="flex items-center justify-center gap-4 flex-wrap">
-            {[
-            { num: "04", label: "Quality Education" },
-            { num: "09", label: "Innovation" },
-            { num: "10", label: "Reduced Inequalities" },
-            { num: "16", label: "Peace & Justice" },
-        ].map((sdg) => (<div key={sdg.num} className="flex flex-col items-center gap-2">
-                <img src={`https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-${sdg.num}.jpg`} alt={sdg.label} className="h-16 w-16 rounded-xl shadow-md hover:scale-110 transition-transform duration-300 cursor-default"/>
-                <span className="text-xs text-muted-foreground font-medium">{sdg.label}</span>
-              </div>))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-24 px-4">
-        <div className="container mx-auto max-w-3xl">
-          <div className="relative rounded-3xl overflow-hidden satya-gradient p-[1px] shadow-2xl shadow-primary/25">
-            <div className="bg-card rounded-3xl px-10 py-16 md:px-20 text-center flex flex-col items-center gap-8">
-              <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--primary)/5)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--primary)/5)_1px,transparent_1px)] bg-[size:3rem_3rem]"/>
-              <div className="relative z-10 space-y-4">
-                <h2 className="text-4xl md:text-5xl font-bold text-foreground">Ready to find the truth?</h2>
-                <p className="text-lg text-muted-foreground max-w-xl">
-                  Join thousands of journalists, educators, and citizens using SatyaCheck to fight back against digital misinformation.
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {methodologySteps.map((step) => (
+              <div key={step.num} className="bg-card border border-border rounded-lg p-6 space-y-3">
+                <span className="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-muted text-muted-foreground inline-block">
+                  Stage {step.num}
+                </span>
+                <h3 className="text-base font-semibold text-foreground">{step.title}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  {step.desc}
                 </p>
               </div>
-              <Link href="/detect" className="relative z-10">
-                <Button size="lg" className="h-13 px-10 rounded-full text-base font-bold hover:scale-105 transition-transform duration-300 satya-gradient border-0 shadow-lg hover:shadow-xl hover:shadow-primary/30">
-                  Start Fact-Checking Free <ArrowRight className="ml-2 h-5 w-5"/>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Core Disciplines */}
+      <section className="py-16 md:py-20 px-4 md:px-6">
+        <div className="container mx-auto max-w-6xl">
+          <div className="max-w-xl mb-12">
+            <span className="text-xs font-semibold uppercase tracking-widest text-primary mb-2 block">
+              Capabilities
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground">
+              Forensic tools designed for complex media.
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {disciplines.map((item, i) => (
+              <div key={i} className="bg-card border border-border rounded-lg p-6 flex gap-4 hover:border-border/80 transition-colors">
+                <div className="p-2.5 rounded bg-muted h-fit shrink-0 border border-border/60">
+                  {item.icon}
+                </div>
+                <div className="space-y-1.5">
+                  <h3 className="text-base font-semibold text-foreground">{item.title}</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Editorial Standards & UN SDGs */}
+      <section className="py-12 px-4 md:px-6 bg-muted/20 border-y border-border/70">
+        <div className="container mx-auto max-w-4xl text-center space-y-4">
+          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            Aligned with Global Public Information Standards
+          </p>
+          <p className="text-xs text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            SatyaCheck supports open access to credible information and media literacy principles in alignment with UN Sustainable Development Goals 4 (Quality Education), 9 (Innovation), 10 (Reduced Inequalities), and 16 (Peace, Justice & Strong Institutions).
+          </p>
+        </div>
+      </section>
+
+      {/* Bottom CTA */}
+      <section className="py-16 md:py-20 px-4 md:px-6">
+        <div className="container mx-auto max-w-3xl">
+          <div className="bg-slate-900 text-white rounded-lg p-8 md:p-12 text-center space-y-6 border border-slate-800 shadow-sm">
+            <h2 className="text-2xl sm:text-3xl font-serif font-bold">
+              Check a claim before you share it.
+            </h2>
+            <p className="text-sm text-slate-300 max-w-lg mx-auto leading-relaxed">
+              Verify viral messages, suspicious headlines, and questionable assertions with transparent, forensic citations.
+            </p>
+            <div className="pt-2">
+              <Link href="/detect">
+                <Button size="lg" className="h-11 px-8 rounded-md font-medium text-sm bg-emerald-600 hover:bg-emerald-500 text-white shadow-xs gap-2">
+                  Launch Verification Tool <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
             </div>
           </div>
         </div>
       </section>
-    </div>);
+    </div>
+  );
 }

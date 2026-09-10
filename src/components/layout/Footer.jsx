@@ -1,54 +1,70 @@
 import { Link } from "wouter";
-import { ScanSearch, ExternalLink } from "lucide-react";
+import { ExternalLink, ShieldCheck } from "lucide-react";
+
 export function Footer() {
-    return (<footer className="bg-foreground text-background py-14 mt-auto">
+  return (
+    <footer className="bg-slate-900 text-slate-200 py-12 mt-auto border-t border-slate-800">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div className="md:col-span-2">
-            <Link href="/" className="flex items-center gap-2.5 mb-5 group w-fit">
-              <div className="satya-gradient p-2 rounded-xl text-white shadow-md">
-                <ScanSearch className="h-5 w-5"/>
-              </div>
-              <span className="font-serif font-bold text-xl tracking-tight text-background">
-                Satya<span className="opacity-60">Check</span>
+            <Link href="/" className="flex items-center gap-2 mb-4 w-fit group">
+              <img
+                src="/logo-mark.png"
+                alt="SatyaCheck Mark"
+                className="h-7 w-auto object-contain"
+              />
+              <span className="font-bold text-lg tracking-tight text-white">
+                Satya<span className="text-emerald-400">Check</span>
               </span>
             </Link>
-            <p className="text-background/60 max-w-sm leading-relaxed text-sm">
-              Empowering global citizens with dual-AI media literacy and real-time fake news detection. <em>Satya</em> means truth — and we're committed to it.
+            <p className="text-slate-400 max-w-md leading-relaxed text-xs">
+              An independent news verification and forensic fact-checking platform dedicated to combating disinformation, analyzing claims across 10 forensic dimensions, and upholding media literacy standards.
             </p>
-            <div className="flex items-center gap-2 mt-5">
-              <span className="text-xs text-background/40 uppercase tracking-wider font-medium">Powered by</span>
-              <span className="text-xs text-background/60 font-semibold">OpenAI & Gemini</span>
-            </div>
+            <p className="text-[11px] font-medium tracking-wider uppercase text-emerald-400/90 mt-4">
+              Verify News • Build a More Informed World
+            </p>
           </div>
           
           <div>
-            <h4 className="font-sans font-semibold text-sm uppercase tracking-wider mb-5 text-background/50">Platform</h4>
-            <ul className="space-y-3">
-              <li><Link href="/" className="text-background/60 hover:text-background transition-colors text-sm">Home</Link></li>
-              <li><Link href="/detect" className="text-background/60 hover:text-background transition-colors text-sm">Detect News</Link></li>
-              <li><Link href="/dashboard" className="text-background/60 hover:text-background transition-colors text-sm">Live Dashboard</Link></li>
+            <h4 className="font-semibold text-xs uppercase tracking-wider mb-3 text-slate-400">Verification Tools</h4>
+            <ul className="space-y-2 text-xs">
+              <li><Link href="/detect" className="text-slate-300 hover:text-white transition-colors">Claim Verifier</Link></li>
+              <li><Link href="/forward" className="text-slate-300 hover:text-white transition-colors">Forward Analyzer</Link></li>
+              <li><Link href="/credibility" className="text-slate-300 hover:text-white transition-colors">Source Index</Link></li>
+              <li><Link href="/trending" className="text-slate-300 hover:text-white transition-colors">Misinformation Wire</Link></li>
+              <li><Link href="/dashboard" className="text-slate-300 hover:text-white transition-colors">Forensic Metrics</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-sans font-semibold text-sm uppercase tracking-wider mb-5 text-background/50">Resources</h4>
-            <ul className="space-y-3">
-              <li><Link href="/education" className="text-background/60 hover:text-background transition-colors text-sm">Education Hub</Link></li>
-              <li><Link href="/about" className="text-background/60 hover:text-background transition-colors text-sm">About the Project</Link></li>
+            <h4 className="font-semibold text-xs uppercase tracking-wider mb-3 text-slate-400">Standards & Education</h4>
+            <ul className="space-y-2 text-xs">
+              <li><Link href="/education" className="text-slate-300 hover:text-white transition-colors">Fact-Checking Methodology</Link></li>
+              <li><Link href="/quiz" className="text-slate-300 hover:text-white transition-colors">Media Literacy Quiz</Link></li>
+              <li><Link href="/about" className="text-slate-300 hover:text-white transition-colors">About SatyaCheck</Link></li>
               <li>
-                <a href="https://sdgs.un.org/goals" target="_blank" rel="noopener noreferrer" className="text-background/60 hover:text-background transition-colors text-sm inline-flex items-center gap-1.5">
-                  UN SDGs <ExternalLink className="h-3 w-3"/>
+                <a
+                  href="https://www.poynter.org/ifcn/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-slate-300 hover:text-white transition-colors inline-flex items-center gap-1"
+                >
+                  IFCN Standards <ExternalLink className="h-3 w-3 text-slate-500" />
                 </a>
               </li>
             </ul>
           </div>
         </div>
         
-        <div className="pt-8 border-t border-background/10 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-background/35">
-          <p>© {new Date().getFullYear()} SatyaCheck. Built for truth, transparency, and a better world.</p>
-          <p>Aligned with UN SDGs 4, 9, 10 & 16</p>
+        <div className="pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
+          <p>© {new Date().getFullYear()} SatyaCheck. Built for truth, accountability, and public interest.</p>
+          <div className="flex items-center gap-4 text-xs text-slate-400">
+            <Link href="/education" className="hover:underline">Methodology</Link>
+            <Link href="/about" className="hover:underline">Principles</Link>
+            <Link href="/history" className="hover:underline">Local History</Link>
+          </div>
         </div>
       </div>
-    </footer>);
+    </footer>
+  );
 }

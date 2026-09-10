@@ -101,31 +101,31 @@ export default function Credibility() {
     return (<div className="container mx-auto max-w-3xl px-4 py-10">
       {/* Header */}
       <div className="mb-8 text-center">
-        <div className="flex items-center justify-center gap-2 mb-3">
-          <Globe className="h-5 w-5 text-primary"/>
-          <span className="text-sm font-semibold text-primary uppercase tracking-wider">Source Credibility</span>
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <Globe className="h-4 w-4 text-primary"/>
+          <span className="text-xs font-semibold text-primary uppercase tracking-wider">Source Index</span>
         </div>
-        <h1 className="text-4xl font-bold text-foreground mb-2">Is This Source Trustworthy?</h1>
-        <p className="text-muted-foreground max-w-lg mx-auto">
-          Enter any news website domain to get an AI-powered trust score, political bias rating, and fact-check history.
+        <h1 className="text-3xl font-serif font-bold text-foreground mb-2">Domain & Source Credibility Index</h1>
+        <p className="text-muted-foreground text-sm max-w-lg mx-auto">
+          Evaluate news domains and publishers for historical factual reliability, bias tendencies, and ownership transparency.
         </p>
       </div>
 
       {/* Input */}
-      <Card className="border-border/60 shadow-lg mb-6">
+      <Card className="border-border shadow-xs mb-6">
         <CardContent className="p-4">
-          <div className="flex gap-3">
+          <div className="flex gap-2.5">
             <div className="relative flex-1">
               <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
-              <Input value={source} onChange={(e) => setSource(e.target.value)} onKeyDown={(e) => e.key === "Enter" && check()} placeholder="e.g. bbc.com, reuters.com, infowars.com" className="pl-10 h-11 border-border/60"/>
+              <Input value={source} onChange={(e) => setSource(e.target.value)} onKeyDown={(e) => e.key === "Enter" && check()} placeholder="e.g. reuters.com, bbc.com, theonion.com" className="pl-10 h-10 border-border text-sm rounded-md"/>
             </div>
-            <Button onClick={() => check()} disabled={loading || !source.trim()} className="h-11 px-6 satya-gradient border-0 shadow-md">
-              {loading ? <Loader2 className="h-4 w-4 animate-spin"/> : "Check Source"}
+            <Button onClick={() => check()} disabled={loading || !source.trim()} className="h-10 px-5 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-medium rounded-md shadow-xs">
+              {loading ? <Loader2 className="h-4 w-4 animate-spin"/> : "Inspect Domain"}
             </Button>
           </div>
-          <div className="flex flex-wrap gap-2 mt-3">
-            <span className="text-xs text-muted-foreground">Try:</span>
-            {EXAMPLE_SOURCES.map((s) => (<button key={s} onClick={() => { setSource(s); check(s); }} className="text-xs px-2.5 py-1 rounded-full border border-border bg-muted/50 hover:bg-primary/5 hover:border-primary/30 hover:text-primary transition-all text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-1.5 mt-3">
+            <span className="text-[11px] text-muted-foreground font-medium mr-1">Sample domains:</span>
+            {EXAMPLE_SOURCES.map((s) => (<button key={s} onClick={() => { setSource(s); check(s); }} className="text-xs px-2.5 py-0.5 rounded border border-border bg-muted/40 hover:bg-muted text-foreground transition-colors font-mono">
                 {s}
               </button>))}
           </div>

@@ -136,25 +136,25 @@ export default function Quiz() {
         }
     };
     if (loading) {
-        return (<div className="flex flex-col items-center gap-4 py-32">
-        <div className="w-16 h-16 rounded-2xl satya-gradient flex items-center justify-center animate-pulse">
-          <Brain className="h-8 w-8 text-white"/>
-        </div>
+        return (<div className="flex flex-col items-center gap-3 py-28">
+        <img src="/logo-mark.png" alt="SatyaCheck" className="h-12 w-auto mb-2 animate-pulse" />
         <div className="text-center">
-          <p className="font-semibold text-foreground">Generating today's quiz...</p>
-          <p className="text-sm text-muted-foreground">AI creating 10 unique challenges</p>
+          <p className="font-semibold text-foreground text-sm">Generating Literacy Challenge...</p>
+          <p className="text-xs text-muted-foreground">Preparing curated real and misleading headlines</p>
         </div>
       </div>);
     }
     return (<div className="container mx-auto max-w-2xl px-4 py-10">
       {/* Header */}
       <div className="mb-8 text-center">
-        <div className="flex items-center justify-center gap-2 mb-3">
-          <Brain className="h-5 w-5 text-primary"/>
-          <span className="text-sm font-semibold text-primary uppercase tracking-wider">Daily Quiz</span>
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <Brain className="h-4 w-4 text-primary"/>
+          <span className="text-xs font-semibold text-primary uppercase tracking-wider">Literacy Training</span>
         </div>
-        <h1 className="text-4xl font-bold text-foreground mb-2">Real or Fake?</h1>
-        <p className="text-muted-foreground">Test your fake news detection skills. 10 headlines — how many can you spot?</p>
+        <h1 className="text-3xl font-serif font-bold text-foreground mb-2">Media Literacy & Detection Challenge</h1>
+        <p className="text-muted-foreground text-sm max-w-md mx-auto">
+          Test your fact-checking instincts across headlines, context clues, and manipulation tactics.
+        </p>
       </div>
 
       {error && (<div className="text-center py-16">

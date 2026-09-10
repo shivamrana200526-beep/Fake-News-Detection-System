@@ -259,7 +259,7 @@ export default function Chat() {
     const [messages, setMessages] = useState([{
             id: "welcome",
             role: "assistant",
-            content: "Hi! I'm **SatyaCheck AI** — your personal fact-checking assistant powered by three independent AIs. 🔍\n\nAsk me about any news story, viral claim, or headline. I'll give you a clear verdict — **✅ Real**, **❌ Fake**, or **⚠️ Misleading** — backed by OpenAI GPT-5, Google Gemini, and Claude all cross-checking at the same time.\n\nYou can also ask me how to spot fake news, how deepfakes work, or anything about media literacy!",
+            content: "Welcome to the **SatyaCheck Forensic Assistant**. 🔍\n\nAsk about any news report, viral claim, or suspicious headline. I evaluate claims across 10 forensic dimensions to deliver an evidence-backed verdict — **✅ Real**, **❌ Fake**, or **⚠️ Misleading**.\n\nYou can also ask about source verification techniques, spotting media manipulation, or deepfake detection.",
         }]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -361,24 +361,23 @@ export default function Chat() {
     });
     return (<div className="container mx-auto max-w-4xl px-4 flex flex-col" style={{ height: "calc(100vh - 140px)" }}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6 shrink-0">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <Sparkles className="h-5 w-5 text-primary"/>
-            <span className="text-sm font-semibold text-primary uppercase tracking-wider">AI Chat</span>
-          </div>
-          <h1 className="text-3xl font-bold text-foreground">Ask SatyaCheck AI</h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            Triple-AI cross-verification: Claude + GPT-5 + Gemini working together
-          </p>
-        </div>
+      <div className="flex items-center justify-between mb-4 shrink-0 border-b border-border pb-4">
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-full border border-border">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"/>
-            3 AIs active
+          <img src="/logo-mark.png" alt="SatyaCheck" className="h-8 w-auto object-contain" />
+          <div>
+            <h1 className="text-xl font-serif font-bold text-foreground">Forensic Research Assistant</h1>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Interactive fact-checking, source tracing, and rhetorical analysis
+            </p>
           </div>
-          <Button variant="ghost" size="icon" onClick={clearChat} title="Clear chat" className="rounded-xl">
-            <RefreshCw className="h-4 w-4"/>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/60 px-2.5 py-1 rounded border border-border">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"/>
+            Active Workspace
+          </div>
+          <Button variant="ghost" size="icon" onClick={clearChat} title="Clear chat" className="h-8 w-8 rounded">
+            <RefreshCw className="h-3.5 w-3.5"/>
           </Button>
         </div>
       </div>
@@ -397,7 +396,7 @@ export default function Chat() {
               Try asking...
             </p>
             <div className="ml-12 flex flex-wrap gap-2">
-              {QUICK_PROMPTS.map((prompt) => (<button key={prompt} onClick={() => sendMessage(prompt)} className="text-xs text-left px-3 py-2 rounded-xl bg-muted/50 border border-border hover:bg-primary/5 hover:border-primary/30 hover:text-primary transition-all duration-200 text-muted-foreground">
+              {QUICK_PROMPTS.map((prompt) => (<button key={prompt} onClick={() => sendMessage(prompt)} className="text-xs text-left px-3 py-2 rounded-lg bg-muted/50 border border-border hover:bg-muted hover:text-foreground transition-colors text-muted-foreground">
                   {prompt}
                 </button>))}
             </div>
@@ -406,19 +405,13 @@ export default function Chat() {
         <div ref={bottomRef}/>
       </div>
 
-      {/* AI Power Badges */}
-      <div className="flex items-center gap-2 pb-3 shrink-0 flex-wrap">
-        {[
-            { label: "Claude AI", color: "text-violet-600 dark:text-violet-400", bg: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900" },
-            { label: "OpenAI GPT-5", color: "text-green-600 dark:text-green-400", bg: "bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-900" },
-            { label: "Google Gemini", color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900" },
-        ].map((ai) => (<span key={ai.label} className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${ai.bg} ${ai.color}`}>
-            {ai.label}
-          </span>))}
-        <span className="text-xs text-muted-foreground flex items-center gap-1">
-          <Zap className="h-3 w-3 text-amber-500"/>
-          cross-verifying every claim in real-time
+      {/* Status Bar */}
+      <div className="flex items-center justify-between pb-2.5 shrink-0 text-xs text-muted-foreground">
+        <span className="flex items-center gap-1.5">
+          <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+          Evidence-backed reasoning & primary source attribution
         </span>
+        <span className="text-[11px] text-muted-foreground hidden sm:inline">SatyaCheck Verification Protocol</span>
       </div>
 
       {/* Input area */}

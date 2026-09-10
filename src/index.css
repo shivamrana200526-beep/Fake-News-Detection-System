@@ -45,8 +45,8 @@
   --color-chart-4: hsl(var(--chart-4));
   --color-chart-5: hsl(var(--chart-5));
 
-  --font-sans: 'Inter', sans-serif;
-  --font-serif: 'DM Serif Display', serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'DM Serif Display', Georgia, serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -56,87 +56,91 @@
 }
 
 :root {
-  --background: 240 10% 98%;
-  --foreground: 240 10% 8%;
+  /* Clean journalistic newsprint background and ink typography */
+  --background: 210 20% 98%;
+  --foreground: 222 47% 11%;
   
   --card: 0 0% 100%;
-  --card-foreground: 240 10% 8%;
-  --card-border: 240 6% 90%;
+  --card-foreground: 222 47% 11%;
+  --card-border: 214 32% 91%;
   
   --popover: 0 0% 100%;
-  --popover-foreground: 240 10% 8%;
-  --popover-border: 240 6% 90%;
+  --popover-foreground: 222 47% 11%;
+  --popover-border: 214 32% 91%;
   
-  --primary: 245 58% 51%;
+  /* Official SatyaCheck Forest Green: #2D7C52 */
+  --primary: 148 48% 34%;
   --primary-foreground: 0 0% 100%;
   
-  --secondary: 240 6% 95%;
-  --secondary-foreground: 240 10% 8%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222 47% 11%;
   
-  --muted: 240 6% 95%;
-  --muted-foreground: 240 4% 50%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
   
-  --accent: 245 80% 95%;
-  --accent-foreground: 245 58% 35%;
+  --accent: 148 40% 94%;
+  --accent-foreground: 148 55% 24%;
   
-  --destructive: 4 86% 58%;
+  /* Status Colors */
+  --destructive: 354 78% 52%;
   --destructive-foreground: 0 0% 100%;
 
-  --success: 142 72% 42%;
+  --success: 148 60% 36%;
   --success-foreground: 0 0% 100%;
 
-  --warning: 36 95% 52%;
-  --warning-foreground: 36 60% 15%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 38 70% 15%;
   
-  --border: 240 6% 90%;
-  --input: 240 6% 90%;
-  --ring: 245 58% 51%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 148 48% 34%;
   
-  --radius: 0.75rem;
+  --radius: 0.5rem;
 
-  --chart-1: 142 72% 42%;
-  --chart-2: 4 86% 58%;
-  --chart-3: 36 95% 52%;
-  --chart-4: 245 58% 51%;
-  --chart-5: 195 74% 47%;
+  --chart-1: 148 60% 36%;
+  --chart-2: 354 78% 52%;
+  --chart-3: 38 92% 50%;
+  --chart-4: 215 16% 47%;
+  --chart-5: 222 47% 25%;
 }
 
 .dark {
-  --background: 240 10% 7%;
-  --foreground: 240 8% 95%;
+  --background: 222 47% 7%;
+  --foreground: 210 40% 98%;
   
-  --card: 240 10% 10%;
-  --card-foreground: 240 8% 95%;
-  --card-border: 240 8% 18%;
+  --card: 222 47% 10%;
+  --card-foreground: 210 40% 98%;
+  --card-border: 217 33% 18%;
   
-  --popover: 240 10% 10%;
-  --popover-foreground: 240 8% 95%;
-  --popover-border: 240 8% 18%;
+  --popover: 222 47% 10%;
+  --popover-foreground: 210 40% 98%;
+  --popover-border: 217 33% 18%;
   
-  --primary: 245 70% 65%;
-  --primary-foreground: 240 10% 5%;
+  /* Forest Green slightly lightened for dark mode legibility */
+  --primary: 148 55% 45%;
+  --primary-foreground: 222 47% 7%;
   
-  --secondary: 240 8% 15%;
-  --secondary-foreground: 240 8% 95%;
+  --secondary: 217 33% 15%;
+  --secondary-foreground: 210 40% 98%;
   
-  --muted: 240 8% 15%;
-  --muted-foreground: 240 5% 55%;
+  --muted: 217 33% 15%;
+  --muted-foreground: 215 20% 65%;
   
-  --accent: 245 50% 18%;
-  --accent-foreground: 245 70% 80%;
+  --accent: 148 40% 16%;
+  --accent-foreground: 148 50% 80%;
   
-  --destructive: 4 72% 45%;
+  --destructive: 354 75% 58%;
   --destructive-foreground: 0 0% 100%;
 
-  --success: 142 60% 35%;
-  --success-foreground: 0 0% 100%;
+  --success: 148 55% 45%;
+  --success-foreground: 222 47% 7%;
 
-  --warning: 36 85% 40%;
-  --warning-foreground: 48 96% 89%;
+  --warning: 38 92% 52%;
+  --warning-foreground: 222 47% 7%;
   
-  --border: 240 8% 18%;
-  --input: 240 8% 18%;
-  --ring: 245 70% 65%;
+  --border: 217 33% 18%;
+  --input: 217 33% 18%;
+  --ring: 148 55% 45%;
 }
 
 @layer base {
@@ -147,27 +151,30 @@
     @apply bg-background text-foreground antialiased font-sans selection:bg-primary/20 selection:text-primary;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif tracking-tight;
+    @apply tracking-tight font-sans;
   }
 }
 
-.glass-card {
-  @apply bg-card/80 backdrop-blur-md border border-border shadow-xl;
+/* Subtle, dignified elevation instead of heavy AI shadows */
+.editorial-card {
+  @apply bg-card border border-border rounded-lg shadow-sm transition-all duration-200;
 }
 
-.hover-elevate {
-  @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
+.editorial-card-hover {
+  @apply hover:border-slate-300 dark:hover:border-slate-700 hover:shadow;
 }
 
+/* Brand styling replacements */
 .satya-gradient {
-  background: linear-gradient(135deg, hsl(245 58% 51%) 0%, hsl(280 60% 55%) 50%, hsl(220 80% 55%) 100%);
+  @apply bg-primary text-primary-foreground;
 }
 
 .satya-text-gradient {
-  background: linear-gradient(135deg, hsl(245 58% 51%) 0%, hsl(280 60% 55%) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #2D7C52;
+}
+
+.dark .satya-text-gradient {
+  color: #369B67;
 }
 
 /* Custom Scrollbar */
@@ -179,17 +186,8 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-muted-foreground/25 rounded-full;
+  @apply bg-muted-foreground/20 rounded-full;
 }
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-muted-foreground/45;
-}
-
-@keyframes pulse-ring {
-  0% { transform: scale(0.8); opacity: 0.8; }
-  100% { transform: scale(1.4); opacity: 0; }
-}
-
-.pulse-ring {
-  animation: pulse-ring 1.5s ease-out infinite;
+  @apply bg-muted-foreground/40;
 }
