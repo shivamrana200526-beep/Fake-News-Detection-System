@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Role 1: Frontend Development — SatyaCheck</title>
+<style>
+  @page {
+    size: A4;
+    margin: 18mm 16mm 18mm 16mm;
+    @bottom-right {
+      content: counter(page);
+    }
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    line-height: 1.55;
+    font-size: 11pt;
+    margin: 0;
+    padding: 0;
+  }
+  .header {
+    border-bottom: 3px solid #059669;
+    padding-bottom: 14px;
+    margin-bottom: 24px;
+  }
+  .header h1 {
+    margin: 0 0 6px 0;
+    font-size: 22pt;
+    color: #0f172a;
+    font-weight: 800;
+  }
+  .header .badge {
+    display: inline-block;
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    font-size: 9pt;
+    font-weight: 600;
+    margin-right: 8px;
+  }
+  .header .subtitle {
+    margin-top: 8px;
+    color: #64748b;
+    font-size: 11pt;
+  }
+  h2 {
+    font-size: 14pt;
+    color: #0f172a;
+    border-bottom: 1.5px solid #e2e8f0;
+    padding-bottom: 6px;
+    margin-top: 24px;
+    margin-bottom: 12px;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-size: 12pt;
+    color: #047857;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    page-break-after: avoid;
+  }
+  p, li {
+    color: #334155;
+    text-align: justify;
+  }
+  ul {
+    padding-left: 20px;
+    margin-top: 6px;
+    margin-bottom: 12px;
+  }
+  li {
+    margin-bottom: 5px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 9.5pt;
+    page-break-inside: avoid;
+  }
+  th {
+    background: #0f172a;
+    color: #ffffff;
+    text-align: left;
+    padding: 8px 10px;
+    font-weight: 600;
+  }
+  td {
+    padding: 7px 10px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+  .callout {
+    background: #f0fdf4;
+    border-left: 4px solid #059669;
+    padding: 12px 14px;
+    margin: 14px 0;
+    border-radius: 0 6px 6px 0;
+    page-break-inside: avoid;
+  }
+  .callout-title {
+    font-weight: 700;
+    color: #065f46;
+    margin-bottom: 4px;
+    font-size: 10pt;
+  }
+  pre {
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 8.5pt;
+    line-height: 1.45;
+    overflow-x: hidden;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 12px 0;
+    page-break-inside: avoid;
+  }
+  .code-tag {
+    background: #f1f5f9;
+    color: #0f172a;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 9pt;
+  }
+  .page-break {
+    page-break-before: always;
+  }
+  .footer-note {
+    font-size: 8.5pt;
+    color: #94a3b8;
+    text-align: center;
+    margin-top: 30px;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="badge">ROLE SPECIFICATION &amp; TECHNICAL DOSSIER</span>
+  <span class="badge">SATYACHECK SYSTEM</span>
+  <h1>Role 1: Frontend Development</h1>
+  <div class="subtitle">
+    <strong>Domain:</strong> Client-Side Architecture, UI/UX Engineering, Data Visualizations &amp; State Management<br>
+    <strong>Core Technology:</strong> React 19 • Tailwind CSS v4 • Vite 7 • Radix UI • Recharts • Framer Motion
+  </div>
+</div>
+
+<h2>1. Executive Summary &amp; Scope</h2>
+<p>
+The <strong>Frontend Developer</strong> is responsible for the entire user-facing surface of the SatyaCheck platform. The mission of this role is to translate complex, 10-dimensional artificial intelligence forensic fact-checking data into an intuitive, accessible, and editorial visual experience. The user interface eliminates cognitive overload and empowers citizens, researchers, and journalists to verify viral claims in seconds.
+</p>
+
+<div class="callout">
+  <div class="callout-title">Core Engineering Objectives:</div>
+  <ul>
+    <li>Deliver sub-100ms client route transitions via client-side routing (<code>wouter</code>).</li>
+    <li>Provide 4 distinct input verification modes: Raw Text, Web Article URL, Headline, and Screenshot Image.</li>
+    <li>Render dynamic, accessible forensic breakdown cards with Recharts visualization graphs.</li>
+    <li>Enable private, offline-first client storage via browser <code>localStorage</code> with instant CSV export.</li>
+    <li>Support accessibility: Web Speech API microphone dictation, keyboard shortcuts (<kbd>Ctrl+Enter</kbd>), and persistent light/dark themes.</li>
+  </ul>
+</div>
+
+<h2>2. Complete Technology Stack</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Technology</th>
+      <th>Version</th>
+      <th>Specific Role &amp; Implementation Justification</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>React</strong></td>
+      <td>19.1.0</td>
+      <td>Pure JavaScript (ES2024) component-driven reactive user interface.</td>
+    </tr>
+    <tr>
+      <td><strong>Vite</strong></td>
+      <td>7.3.6</td>
+      <td>Next-generation lightning-fast ES module bundler and hot-module dev server.</td>
+    </tr>
+    <tr>
+      <td><strong>Tailwind CSS</strong></td>
+      <td>4.1.14</td>
+      <td>Modern design system tokens, responsive utilities, and automated theme styling.</td>
+    </tr>
+    <tr>
+      <td><strong>TanStack Query</strong></td>
+      <td>5.90.21</td>
+      <td>Server-state management, asynchronous cache invalidation, loading states, and error handling.</td>
+    </tr>
+    <tr>
+      <td><strong>Radix UI (shadcn)</strong></td>
+      <td>Latest</td>
+      <td>WAI-ARIA compliant accessible headless UI primitives (Dialogs, Tooltips, Tabs, Badges).</td>
+    </tr>
+    <tr>
+      <td><strong>Recharts</strong></td>
+      <td>2.15.4</td>
+      <td>SVG-based responsive data visualization charts (Forensic confidence pie and metric bars).</td>
+    </tr>
+    <tr>
+      <td><strong>Framer Motion</strong></td>
+      <td>12.4.7</td>
+      <td>Hardware-accelerated micro-animations, spring-animated metrics, and fluid route transitions.</td>
+    </tr>
+    <tr>
+      <td><strong>Vitest</strong></td>
+      <td>3.0.0</td>
+      <td>Unit testing framework executing 13 automated tests for UI logic and formatting.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>3. Comprehensive Page Catalog</h2>
+<p>The frontend comprises 11 fully implemented, dedicated routes:</p>
+<table>
+  <thead>
+    <tr>
+      <th>Route</th>
+      <th>Page Component</th>
+      <th>Key User Capabilities &amp; Features</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>/</code></td>
+      <td><code>Home.jsx</code></td>
+      <td>Interactive landing portal, live animated counter metrics (Total, Real, Fake checks), feature highlights.</td>
+    </tr>
+    <tr>
+      <td><code>/detect</code></td>
+      <td><code>Detect.jsx</code></td>
+      <td>Core verification console: 4 input tabs (Text, URL, Headline, Image), voice dictation, forensic card view.</td>
+    </tr>
+    <tr>
+      <td><code>/chat</code></td>
+      <td><code>Chat.jsx</code></td>
+      <td>Real-time streaming AI assistant (Server-Sent Events) with multi-claim analysis and quick prompts.</td>
+    </tr>
+    <tr>
+      <td><code>/dashboard</code></td>
+      <td><code>Dashboard.jsx</code></td>
+      <td>Global platform metrics, Recharts distribution graphs, trending misinformation topics.</td>
+    </tr>
+    <tr>
+      <td><code>/history</code></td>
+      <td><code>History.jsx</code></td>
+      <td>Personal client-side verification history (up to 100 entries), search, filters, and one-click CSV export.</td>
+    </tr>
+    <tr>
+      <td><code>/forward</code></td>
+      <td><code>Forward.jsx</code></td>
+      <td>Dedicated WhatsApp &amp; Telegram chain forward cleaner; strips forwarded noise to analyze manipulation.</td>
+    </tr>
+    <tr>
+      <td><code>/credibility</code></td>
+      <td><code>Credibility.jsx</code></td>
+      <td>Domain trust rating lookup; scores media bias (Far Left to Far Right) and journalistic transparency.</td>
+    </tr>
+    <tr>
+      <td><code>/trending</code></td>
+      <td><code>Trending.jsx</code></td>
+      <td>Live wire displaying circulating viral conspiracy theories, severity badges, and platform spread.</td>
+    </tr>
+    <tr>
+      <td><code>/quiz</code></td>
+      <td><code>Quiz.jsx</code></td>
+      <td>10-question interactive media literacy test with instant educational explanations and score tracking.</td>
+    </tr>
+    <tr>
+      <td><code>/education</code></td>
+      <td><code>Education.jsx</code></td>
+      <td>Media Literacy Hub detailing the taxonomy of Misinformation, Disinformation, and Malinformation.</td>
+    </tr>
+    <tr>
+      <td><code>/about</code></td>
+      <td><code>About.jsx</code></td>
+      <td>Mission statement, ethical principles, and UN Sustainable Development Goal (SDG 4, 9, 10, 16) alignment.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<h2>4. Core Code Implementations</h2>
+
+<h3>4.1 API Integration Hook (<code>src/hooks/use-analysis.js</code>)</h3>
+<p>
+This custom hook utilizes TanStack Query's <code>useMutation</code> to dispatch verification requests to the Express backend and automatically invalidate platform statistics caches:
+</p>
+<pre>
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+// Dispatches content (text, URL, or image base64) to the backend API
+export function useAnalyzeContent() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ content, type }) => {
+      const res = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content, type }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || "Failed to analyze content");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      // Invalidate global stats and history queries so UI re-fetches automatically
+      queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/history"] });
+    },
+  });
+}
+
+// Fetches global platform analytics for the dashboard
+export function useStats() {
+  return useQuery({
+    queryKey: ["/api/stats"],
+    queryFn: async () => {
+      const res = await fetch("/api/stats");
+      if (!res.ok) throw new Error("Failed to load statistics");
+      return res.json();
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes cache
+  });
+}
+</pre>
+
+<h3>4.2 Web Speech API Voice Dictation Hook (<code>src/hooks/use-voice-input.js</code>)</h3>
+<pre>
+import { useState, useCallback } from "react";
+
+export function useVoiceInput(onResult) {
+  const [isListening, setIsListening] = useState(false);
+  const [error, setError] = useState(null);
+
+  const startListening = useCallback(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setError("Speech recognition is not supported in this browser.");
+      return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = "en-US";
+
+    recognition.onstart = () => { setIsListening(true); setError(null); };
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      onResult(transcript);
+    };
+    recognition.onerror = (e) => { setError(e.error); setIsListening(false); };
+    recognition.onend = () => setIsListening(false);
+
+    recognition.start();
+  }, [onResult]);
+
+  return { isListening, error, startListening };
+}
+</pre>
+
+<h3>4.3 Client-Side Storage &amp; CSV Export (<code>src/pages/History.jsx</code>)</h3>
+<pre>
+const STORAGE_KEY = "satyacheck_history";
+
+export function saveToHistory(entry) {
+  try {
+    const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    const newEntry = {
+      ...entry,
+      id: Date.now().toString(),
+      timestamp: new Date().toISOString(),
+    };
+    const updated = [newEntry, ...existing].slice(0, 100); // Cap at 100 entries
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    return updated;
+  } catch {
+    return [];
+  }
+}
+
+export function exportHistoryToCSV(entries) {
+  const headers = ["Date", "Type", "Content", "Verdict", "Confidence"];
+  const rows = entries.map(e => [
+    e.timestamp,
+    e.type,
+    `"${(e.content || "").replace(/"/g, '""')}"`,
+    e.verdict,
+    `${e.confidence}%`
+  ]);
+  const csvContent = "data:text/csv;charset=utf-8," + [headers, ...rows].map(r => r.join(",")).join("\n");
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", `satyacheck_history_${new Date().toISOString().slice(0,10)}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+</pre>
+
+<div class="page-break"></div>
+
+<h2>5. UI/UX &amp; Design System Standards</h2>
+<ul>
+  <li><strong>Color Architecture:</strong> Emerald Green primary (<code>#059669</code>) symbolizing Truth (<em>Satya</em>), Slate Dark Neutral (<code>#0f172a</code>), Slate Light (<code>#f8fafc</code>), Alert Red (<code>#dc2626</code>) for Fake news, Amber (<code>#d97706</code>) for Misleading.</li>
+  <li><strong>Theme Persistence:</strong> Implemented via <code>localStorage.getItem("satya-theme")</code>; automatically prevents flash of wrong theme on page load.</li>
+  <li><strong>Typography:</strong> Proportional font scaling utilizing system sans-serif hierarchy with high editorial contrast.</li>
+  <li><strong>Feedback Mechanisms:</strong> Interactive confetti explosion via <code>canvas-confetti</code> on <code>VERIFIED REAL</code> results to reward factual media consumption.</li>
+</ul>
+
+<h2>6. Unit Testing &amp; Quality Assurance</h2>
+<p>
+The frontend features a dedicated Vitest suite (<strong>13 automated test cases</strong> passing in ~200ms):
+</p>
+<ul>
+  <li><code>utils.test.js</code>: Tests Tailwind class conflict resolution (e.g. <code>px-2 py-1</code> overridden by <code>px-4</code>) and conditional class truthiness.</li>
+  <li><code>verdict.test.js</code>: Verifies verdict badges, manipulation index thresholds (&gt;60 High, &gt;35 Moderate, &lt;35 Low), and Recharts pie data summing to 100%.</li>
+  <li><code>storage.test.js</code>: Validates <code>localStorage</code> item bounding (maximum 100 entries) and CSV column escaping.</li>
+</ul>
+
+<h2>7. Viva &amp; Technical Defense Q&amp;A</h2>
+<div class="callout">
+  <strong>Q1: Why did you choose React 19 with Vite instead of Next.js?</strong><br>
+  <em>A:</em> SatyaCheck is designed as an ultra-fast client-side single page application (SPA). Vite 7 provides instant hot-module replacement (sub-50ms) and outputs lightweight static bundles that can be deployed to any CDN or static server without server-rendering overhead.
+</div>
+<div class="callout">
+  <strong>Q2: How does the client prevent UI freezing during long AI inferences?</strong><br>
+  <em>A:</em> All network calls are managed asynchronously using TanStack React Query. The UI displays responsive skeleton loaders and animated progress bars, ensuring the browser main thread remains completely interactive.
+</div>
+<div class="callout">
+  <strong>Q3: How is user privacy guaranteed on the frontend?</strong><br>
+  <em>A:</em> History records are stored exclusively in the user's browser <code>localStorage</code>. No search history or tracking cookies are sent to third-party ad networks.
+</div>
+
+<div class="footer-note">
+  SatyaCheck Project Specification Dossier • Role 1: Frontend Development • Page 1 of 3
+</div>
+
+</body>
+</html>

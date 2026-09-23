@@ -1,190 +1,315 @@
-﻿
-# SatyaCheck — Fake News Detection System
+# 🛡️ SatyaCheck — AI-Powered Fake News Detection System
 
-SatyaCheck is a web app that helps users identify whether a news article, claim, or social media post is real, fake, 
-or misleading. It uses a multi-model AI approach where Gemini runs a full contextual analysis to determine the 
-credibility of claims.
+<div align="center">
 
-"Satya" means **Truth** in Sanskrit.
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/shivamrana200526-beep/Fake-News-Detection-System)
+[![Node.js](https://img.shields.io/badge/Node.js-20+-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![Express](https://img.shields.io/badge/Express-5-000000?logo=express&logoColor=white)](https://expressjs.com/)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
----
+**"Satya" means Truth in Sanskrit.**
 
-## Problem Statement
+SatyaCheck is a full-stack web application that uses locally-running AI to detect whether a news article, claim, or social media post is **Real**, **Fake**, or **Misleading** — with no external API costs, no data sent to third parties, and no internet dependency for analysis.
 
-Misinformation spreads faster than corrections, especially on WhatsApp, Telegram, and social media. Most fact-checking 
-tools require you to already know what to search for. SatyaCheck lets you paste any text, URL, or image and get an 
-immediate, reasoned verdict.
-
----
-
-## Key Features
-
-- **Powered by Gemini 2.5 Flash for complete claim verification, synthesis, and streaming chat.
-- **Source credibility checker**: Rate any news source or domain by trustworthiness
-- **Real-time chat**: Ask follow-up questions about any claim
-- **Daily quiz**: 10-question misinformation quiz, regenerated every 24 hours
-- **Trending fake news**: GPT-generated list of currently circulating misinformation stories
-- **Forward checker**: Analyze WhatsApp-style forwarded messages
-- **Image analysis**: Upload screenshots of social posts for analysis
-- **Analysis history**: Past analyses stored in PostgreSQL via Drizzle ORM
+</div>
 
 ---
 
-## How the Detection Works
+## 📋 Table of Contents
 
-- The user inputs text, a URL, or an image.
-- The system extracts the most specific, verifiable factual claims.
-- Gemini independently verifies each claim with its own knowledge base.
-- A final synthesized verdict is streamed to the UI.
-
----
-
-## AI Models Used
-
-| Role | Model | Purpose |
-|------|-------|---------|
-| All Analysis | Gemini 2.5 Flash (Google) | Claim extraction, verification, streaming chat, credibility, quiz, 
-trending |
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Getting Started](#-getting-started)
+- [API Reference](#-api-reference)
+- [Environment Variables](#-environment-variables)
+- [Deployment](#-deployment)
+- [Contributing](#-contributing)
 
 ---
 
-## Tech Stack
+## ✨ Features
 
-**Frontend**
-- React 19, TypeScript, Vite 7
-- Tailwind CSS v4, shadcn/ui components
-- TanStack Query for data fetching
-- Wouter for routing
-
-**Backend**
-- Node.js, Express 5, TypeScript
-- Google GenAI SDK
-- Drizzle ORM with PostgreSQL
-- Pino for structured logging
-- esbuild for production bundling
-
-**Infra**
-- Deployed on Render (web service + PostgreSQL)
-- pnpm workspaces monorepo
+| Feature | Description |
+|---------|-------------|
+| 🔍 **AI Fact-Check** | Paste any text, URL, or claim — get a verdict with confidence score |
+| 💬 **AI Chat** | Ask follow-up questions about any fact-checked claim |
+| 📊 **Source Credibility** | Rate any news domain or source for trustworthiness |
+| 📰 **Trending Misinformation** | Live feed of currently circulating fake stories |
+| 🧠 **Media Literacy Quiz** | 10-question daily quiz to sharpen your fact-checking skills |
+| 🔐 **Authentication** | Email/password register & login + Google Sign-In |
+| 📈 **Analysis History** | Persistent history of all past fact-checks |
+| 🔒 **100% Local AI** | Powered by Ollama — no API keys, no data leaves your machine |
 
 ---
 
-## Project Structure
+## 🛠️ Tech Stack
+
+### Backend (`artifacts/api-server/`)
+| Technology | Purpose |
+|-----------|---------|
+| **Node.js 20+** | Runtime — ES Modules (ESM) |
+| **Express 5** | Web framework & REST API |
+| **Ollama** | Local AI model runner |
+| **crypto** (built-in) | Password hashing (scrypt), token generation |
+| **fs / path** (built-in) | File-based storage fallback |
+| **Pino** | Structured JSON logging |
+| **CORS** | Cross-origin request handling |
+
+### Frontend (`frontend-js/`)
+| Technology | Purpose |
+|-----------|---------|
+| **React 18** | UI framework |
+| **Vite** | Dev server & build tool |
+| **Tailwind CSS v4** | Utility-first styling |
+| **shadcn/ui** | Pre-built accessible components |
+
+### AI Model
+| Model | Runner | Notes |
+|-------|--------|-------|
+| `llama3.2:1b` | Ollama | Runs 100% locally, ~700MB download |
+
+---
+
+## 📁 Project Structure
 
 ```
-satyacheck/
+Fake-News-Defense/
 ├── artifacts/
-│   ├── api-server/          # Express backend
-│   │   ├── src/
-│   │   │   ├── routes/      # analyze, chat, credibility, quiz, trending
-│   │   │   └── lib/         # anthropic client, logger, scraper
-│   │   └── build.mjs        # esbuild bundler config
-│   └── fake-news-defense/   # React frontend
+│   └── api-server/              # Express REST API backend
 │       └── src/
-│           ├── pages/       # Detect, Chat, Credibility, Quiz, Trending, …
-│           └── components/  # UI components (shadcn-based)
+│           ├── index.js         # Entry point — starts server
+│           ├── app.js           # Express app, middleware, CORS
+│           └── routes/
+│               ├── index.js     # Route aggregator
+│               ├── auth.js      # /api/auth/* — register, login, token
+│               ├── analyze.js   # /api/analyze — AI fact-check
+│               ├── chat.js      # /api/chat — streaming AI chat
+│               ├── credibility.js # /api/credibility
+│               ├── trending.js  # /api/trending
+│               ├── quiz.js      # /api/quiz
+│               └── users.js     # /api/users/*
+├── frontend-js/                 # React + Vite frontend
+│   └── src/
+│       ├── pages/               # Login, Home, Detect, Chat, Quiz…
+│       ├── components/          # Shared UI components
+│       ├── contexts/            # AuthContext (session management)
+│       └── hooks/               # useAuth, custom hooks
 ├── lib/
-│   ├── db/                  # Drizzle schema + migrations
-│   ├── api-zod/             # Shared Zod schemas (generated)
-│   └── api-client-react/    # Auto-generated React Query hooks
-├── scripts/                 # PDF generation scripts
-├── render.yaml              # Render deployment config
-├── .env.example             # Required environment variables
-└── pnpm-workspace.yaml      # Monorepo config
+│   └── db/                      # Drizzle ORM schema (PostgreSQL)
+├── .env.example                 # Environment variable template
+├── .gitignore                   # Excludes .env, node_modules, data files
+└── README.md
 ```
 
 ---
 
-## Setup
+## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 20+
-- pnpm 12+ (`npm install -g pnpm`)
-- PostgreSQL database (local or hosted — Neon/Supabase work well on the free tier)
 
-### Installation
+Make sure the following are installed before running the project:
+
+| Requirement | Version | Install |
+|-------------|---------|---------|
+| **Node.js** | 20+ | [nodejs.org](https://nodejs.org/) |
+| **pnpm** | 8+ | `npm install -g pnpm` |
+| **Ollama** | Latest | [ollama.com/download](https://ollama.com/download) |
+
+### 1. Clone the Repository
 
 ```bash
-# Clone the repo
-git clone https://github.com/your-username/satyacheck.git
-cd satyacheck
+git clone https://github.com/shivamrana200526-beep/Fake-News-Detection-System.git
+cd Fake-News-Detection-System
+```
 
-# Install dependencies
-pnpm install
+### 2. Set Up Environment Variables
 
-# Copy and fill in environment variables
+```bash
+# Copy the example env file
 cp .env.example .env
 ```
 
-### Environment Variables
+The default values in `.env` work out of the box — no changes needed for local development.
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `PORT` | No | API server port (default: 3000) |
-| `DATABASE_URL` | Yes | PostgreSQL connection string |
-| `GEMINI_API_KEY` | Yes | Google AI Studio API key |
+> ⚠️ **Never commit `.env` to Git.** It is already listed in `.gitignore`.
 
----
-
-## Running Locally
+### 3. Install Dependencies
 
 ```bash
-# Terminal 1 — Start the backend
-cd artifacts/api-server
-pnpm dev
+# Install all workspace dependencies from the root
+pnpm install
 
-# Terminal 2 — Start the frontend
-cd artifacts/fake-news-defense
-pnpm dev
+# Install frontend dependencies separately
+cd frontend-js && npm install && cd ..
 ```
 
-The frontend dev server proxies API calls to `http://localhost:3000` by default.
-
-To build for production:
+### 4. Download the AI Model (First Time Only)
 
 ```bash
-pnpm run build
+# Pull the AI model (~700MB, one-time download)
+ollama pull llama3.2:1b
 ```
 
-The backend serves the frontend static files in production from `artifacts/fake-news-defense/dist/public`.
+### 5. Start the Application
+
+**Terminal 1 — AI Model:**
+```bash
+ollama serve
+```
+
+**Terminal 2 — Backend API:**
+```bash
+# From the project root
+node --env-file=".env" artifacts/api-server/src/index.js
+```
+
+**Terminal 3 — Frontend:**
+```bash
+cd frontend-js
+npm run dev
+```
+
+### 6. Open the App
+
+| Service | URL |
+|---------|-----|
+| Frontend | [http://localhost:5173](http://localhost:5173) |
+| Backend API | [http://localhost:3000](http://localhost:3000) |
+| Health Check | [http://localhost:3000/api/healthz](http://localhost:3000/api/healthz) |
 
 ---
 
-## Example Usage
+## 🔌 API Reference
 
-1. Go to the **Detect** page
-2. Paste a claim: *"Drinking bleach cures COVID-19"*
-3. Click **Check** — Gemini runs a full contextual analysis to determine the credibility of claims.
-4. Gemini streams a verdict with reasoning and red flags.
-5. Use **Chat** to ask follow-up questions
+### Authentication
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| `POST` | `/api/auth/register` | Create a new account | No |
+| `POST` | `/api/auth/login` | Sign in with email & password | No |
+| `POST` | `/api/auth/google` | Sign in with Google | No |
+| `GET` | `/api/auth/me` | Get current user session | Yes (Bearer token) |
+| `POST` | `/api/auth/forgot-password` | Request password reset | No |
+
+### Core Features
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/healthz` | Server health check |
+| `POST` | `/api/analyze` | Run AI fact-check on a claim or URL |
+| `GET` | `/api/history` | Get past analysis results |
+| `GET` | `/api/stats` | Analysis statistics |
+| `POST` | `/api/chat` | Streaming AI chat (Server-Sent Events) |
+| `GET` | `/api/credibility?domain=<url>` | Source credibility rating |
+| `GET` | `/api/trending` | Trending misinformation stories |
+| `GET` | `/api/quiz` | Daily media literacy quiz |
+
+### Example: Fact-Check a Claim
+
+```bash
+curl -X POST http://localhost:3000/api/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"content": "Drinking bleach cures COVID-19", "sourceType": "text"}'
+```
+
+**Response:**
+```json
+{
+  "prediction": "Fake",
+  "confidence": 99,
+  "explanation": "This claim is medically dangerous and completely false.",
+  "keywords": ["bleach", "COVID-19"],
+  "manipulationScore": 95
+}
+```
 
 ---
 
-## Limitations
+## ⚙️ Environment Variables
 
-- Analysis quality depends on AI model knowledge cutoffs — very recent events may not be verified accurately
-- The app does not crawl the live web by default (URL scraping is basic)
-- Image analysis is limited to text/screenshots; complex charts may not be interpreted correctly
-- Free-tier AI API rate limits apply
+Create a `.env` file in the project root. See [`.env.example`](.env.example) for a full template.
 
----
-
-## Future Improvements
-
-- Add a browser extension for inline fact-checking
-- Support regional languages (Hindi, Tamil, Bengali) for WhatsApp misinformation
-- Integrate live web search (Serper/Brave Search API) for real-time verification
-- Add user accounts and saved analysis history
-- Mobile app (React Native)
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `PORT` | No | `3000` | Backend server port |
+| `NODE_ENV` | No | `development` | `development` or `production` |
+| `OLLAMA_BASE_URL` | No | `http://127.0.0.1:11434/v1` | Ollama API endpoint |
+| `OLLAMA_MODEL` | No | `llama3.2:1b` | AI model to use |
+| `DATABASE_URL` | No | — | PostgreSQL connection string. If not set, the app uses local JSON file storage automatically |
 
 ---
 
-## Credits
+## 🐛 Troubleshooting
 
-Built by Shivam Rana as a college final-year project.
+| Problem | Cause | Fix |
+|---------|-------|-----|
+| `Error: .env file not found` | Missing `.env` | Run `cp .env.example .env` |
+| `Cannot find module '@workspace/db'` | Dependencies not installed | Run `pnpm install` from root |
+| `ECONNREFUSED 11434` | Ollama not running | Run `ollama serve` in a terminal |
+| `Port 3000 already in use` | Another process on port 3000 | Change `PORT=3001` in `.env` |
+| `pnpm: command not found` | pnpm not installed | Run `npm install -g pnpm` |
+| Frontend API errors (CORS) | Backend not running | Start backend first on port 3000 |
 
-AI tools (GitHub Copilot, Claude) were used for scaffolding boilerplate, generating UI components, and debugging. The 
-project architecture, multi-model integration design, prompt engineering, and implementation decisions were developed 
-and organized by the project author.
+---
 
+## 🌐 Deployment
 
+### Environment Setup for Production
+
+When deploying (Render, Railway, Vercel, etc.), set these environment variables in your platform's dashboard:
+
+```
+NODE_ENV=production
+PORT=3000
+OLLAMA_BASE_URL=<your-ollama-endpoint>
+OLLAMA_MODEL=llama3.2:1b
+DATABASE_URL=<your-postgresql-connection-string>
+```
+
+> **Note:** Ollama must be hosted separately or use a compatible API endpoint for cloud deployment.
+
+### Build for Production
+
+```bash
+# Build the frontend
+cd frontend-js && npm run build
+
+# The Express backend will serve the built frontend from /dist in production
+```
+
+---
+
+## 🔒 Security
+
+- Passwords are hashed using **`crypto.scryptSync`** with a unique salt per user — never stored in plain text
+- Session tokens are generated with **`crypto.randomBytes(32)`** — cryptographically secure
+- **`crypto.timingSafeEqual`** is used for password comparison to prevent timing attacks
+- `.env` files are excluded from version control via `.gitignore`
+- User data files (`users-storage.json`, `analyses-storage.json`) are excluded from Git
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature`
+3. Commit your changes: `git commit -m "feat: add your feature"`
+4. Push to the branch: `git push origin feature/your-feature`
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 👨‍💻 Author
+
+**Shivam Rana**
+GitHub: [@shivamrana200526-beep](https://github.com/shivamrana200526-beep)
+
+> Built as a college final-year project. AI tools were used for scaffolding. Project architecture, AI integration, prompt engineering, and implementation decisions were developed by the author.

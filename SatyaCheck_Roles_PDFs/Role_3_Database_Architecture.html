@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Role 3: Database Architecture — SatyaCheck</title>
+<style>
+  @page {
+    size: A4;
+    margin: 18mm 16mm 18mm 16mm;
+    @bottom-right { content: counter(page); }
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    line-height: 1.55;
+    font-size: 11pt;
+    margin: 0;
+    padding: 0;
+  }
+  .header {
+    border-bottom: 3px solid #059669;
+    padding-bottom: 14px;
+    margin-bottom: 24px;
+  }
+  .header h1 {
+    margin: 0 0 6px 0;
+    font-size: 22pt;
+    color: #0f172a;
+    font-weight: 800;
+  }
+  .header .badge {
+    display: inline-block;
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    font-size: 9pt;
+    font-weight: 600;
+    margin-right: 8px;
+  }
+  .header .subtitle {
+    margin-top: 8px;
+    color: #64748b;
+    font-size: 11pt;
+  }
+  h2 {
+    font-size: 14pt;
+    color: #0f172a;
+    border-bottom: 1.5px solid #e2e8f0;
+    padding-bottom: 6px;
+    margin-top: 24px;
+    margin-bottom: 12px;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-size: 12pt;
+    color: #047857;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    page-break-after: avoid;
+  }
+  p, li {
+    color: #334155;
+    text-align: justify;
+  }
+  ul {
+    padding-left: 20px;
+    margin-top: 6px;
+    margin-bottom: 12px;
+  }
+  li {
+    margin-bottom: 5px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 9.5pt;
+    page-break-inside: avoid;
+  }
+  th {
+    background: #0f172a;
+    color: #ffffff;
+    text-align: left;
+    padding: 8px 10px;
+    font-weight: 600;
+  }
+  td {
+    padding: 7px 10px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+  .callout {
+    background: #ecfdf5;
+    border-left: 4px solid #059669;
+    padding: 12px 14px;
+    margin: 14px 0;
+    border-radius: 0 6px 6px 0;
+    page-break-inside: avoid;
+  }
+  .callout-title {
+    font-weight: 700;
+    color: #065f46;
+    margin-bottom: 4px;
+    font-size: 10pt;
+  }
+  pre {
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 8.5pt;
+    line-height: 1.45;
+    overflow-x: hidden;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 12px 0;
+    page-break-inside: avoid;
+  }
+  .page-break {
+    page-break-before: always;
+  }
+  .footer-note {
+    font-size: 8.5pt;
+    color: #94a3b8;
+    text-align: center;
+    margin-top: 30px;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="badge">ROLE SPECIFICATION &amp; TECHNICAL DOSSIER</span>
+  <span class="badge">SATYACHECK SYSTEM</span>
+  <h1>Role 3: Database Architecture</h1>
+  <div class="subtitle">
+    <strong>Domain:</strong> Relational Schema Modeling, Dual-Persistence Engine, SQL Aggregations &amp; Migrations<br>
+    <strong>Core Technology:</strong> PostgreSQL • Drizzle ORM • Node-Postgres (pg.Pool) • Drizzle Zod • JSON Document Storage
+  </div>
+</div>
+
+<h2>1. Executive Summary &amp; Scope</h2>
+<p>
+The <strong>Database Architect</strong> is responsible for data persistence, schema integrity, and storage resiliency in the SatyaCheck verification platform. The role designs relational models capable of storing complex forensic news analyses, multi-turn conversational transcripts, and statistical aggregate metrics, while providing a zero-downtime dual-persistence fallback strategy.
+</p>
+
+<div class="callout">
+  <div class="callout-title">Core Engineering Objectives:</div>
+  <ul>
+    <li>Design normalized, high-performance relational schemas using <strong>Drizzle ORM</strong> in pure JavaScript (ES Modules).</li>
+    <li>Implement hybrid relational-document storage utilizing PostgreSQL <code>JSONB</code> and native array types for nested forensic data.</li>
+    <li>Build a <strong>Dual-Persistence Engine</strong>: Primary storage routes to PostgreSQL; if the database is unavailable, writes failover seamlessly to an atomic local JSON document store (<code>analyses-storage.json</code>) without throwing 500 errors.</li>
+    <li>Formulate optimized SQL aggregation queries (<code>unnest</code>, group-by, windowing) for dashboard analytics and trending topics.</li>
+    <li>Manage automated schema migrations and validation boundaries with <strong>Drizzle Kit</strong> and <strong>Drizzle Zod</strong>.</li>
+  </ul>
+</div>
+
+<h2>2. Complete Technology Stack</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Technology</th>
+      <th>Version</th>
+      <th>Role &amp; Architectural Rationale</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>PostgreSQL</strong></td>
+      <td>v15 / v16</td>
+      <td>Enterprise ACID-compliant relational engine with advanced JSONB indexing, array operators, and connection pooling.</td>
+    </tr>
+    <tr>
+      <td><strong>Drizzle ORM</strong></td>
+      <td>0.38.4</td>
+      <td>Zero-overhead, lightweight SQL query builder with native ES Module support and zero binary engine dependencies.</td>
+    </tr>
+    <tr>
+      <td><strong>pg (node-postgres)</strong></td>
+      <td>8.13.1</td>
+      <td>Battle-tested PostgreSQL client for Node.js featuring robust connection pooling via <code>Pool</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>Drizzle Kit</strong></td>
+      <td>0.30.2</td>
+      <td>CLI migration runner for schema diffing, automated SQL generation, and instant push synchronization.</td>
+    </tr>
+    <tr>
+      <td><strong>Drizzle Zod</strong></td>
+      <td>0.7.0</td>
+      <td>Auto-generates runtime request validation schemas directly from Drizzle table definitions.</td>
+    </tr>
+    <tr>
+      <td><strong>Local Document Store</strong></td>
+      <td>Atomic JSON</td>
+      <td>In-memory/disk buffer for continuous offline operation when database network access is restricted.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>3. Relational Schema Architecture &amp; Data Dictionary</h2>
+
+<h3>3.1 The <code>analyses</code> Table (Core Forensic Verdict Records)</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Column Name</th>
+      <th>PostgreSQL Type</th>
+      <th>Nullability</th>
+      <th>Description &amp; Constraints</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>SERIAL</code></td>
+      <td>PRIMARY KEY</td>
+      <td>Auto-incrementing unique analysis identifier.</td>
+    </tr>
+    <tr>
+      <td><code>content</code></td>
+      <td><code>TEXT</code></td>
+      <td>NOT NULL</td>
+      <td>The raw claim, article text, or URL submitted for verification.</td>
+    </tr>
+    <tr>
+      <td><code>source_type</code></td>
+      <td><code>TEXT</code></td>
+      <td>NOT NULL</td>
+      <td>Input classification: <code>"text"</code>, <code>"url"</code>, or <code>"image"</code>.</td>
+    </tr>
+    <tr>
+      <td><code>prediction</code></td>
+      <td><code>TEXT</code></td>
+      <td>NOT NULL</td>
+      <td>Tri-state forensic determination: <code>"Real"</code>, <code>"Fake"</code>, or <code>"Misleading"</code>.</td>
+    </tr>
+    <tr>
+      <td><code>confidence</code></td>
+      <td><code>INTEGER</code></td>
+      <td>NOT NULL</td>
+      <td>Algorithmic confidence percentage (bounded 0 to 100).</td>
+    </tr>
+    <tr>
+      <td><code>explanation</code></td>
+      <td><code>TEXT</code></td>
+      <td>NOT NULL</td>
+      <td>Executive 1-2 sentence core verdict justification.</td>
+    </tr>
+    <tr>
+      <td><code>keywords</code></td>
+      <td><code>TEXT[]</code></td>
+      <td>NULLABLE</td>
+      <td>PostgreSQL native string array of extracted high-salience topic tags.</td>
+    </tr>
+    <tr>
+      <td><code>detected_source</code></td>
+      <td><code>JSONB</code></td>
+      <td>NULLABLE</td>
+      <td>Extracted publication metadata: <code>{ name: string, url: string }</code>.</td>
+    </tr>
+    <tr>
+      <td><code>additional_sources</code></td>
+      <td><code>JSONB</code></td>
+      <td>NULLABLE</td>
+      <td>Corroborating citations array: <code>[{ name, url }]</code>.</td>
+    </tr>
+    <tr>
+      <td><code>media_type</code></td>
+      <td><code>TEXT</code></td>
+      <td>DEFAULT 'text'</td>
+      <td>Input modality (text, image base64, external URL).</td>
+    </tr>
+    <tr>
+      <td><code>gemini_verification</code></td>
+      <td><code>JSONB</code></td>
+      <td>DEFAULT NULL</td>
+      <td>Secondary verification dossier and manipulation metrics.</td>
+    </tr>
+    <tr>
+      <td><code>fact_breakdown</code></td>
+      <td><code>JSONB</code></td>
+      <td>DEFAULT NULL</td>
+      <td>Detailed claims list: <code>[{ category, detail, status }]</code>.</td>
+    </tr>
+    <tr>
+      <td><code>created_at</code></td>
+      <td><code>TIMESTAMP</code></td>
+      <td>DEFAULT NOW()</td>
+      <td>Audit timestamp of verification creation.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<h3>3.2 Conversational Tables (<code>conversations</code> &amp; <code>messages</code>)</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Table</th>
+      <th>Column</th>
+      <th>Type</th>
+      <th>Key / References</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>conversations</code></td>
+      <td><code>id</code></td>
+      <td><code>SERIAL</code></td>
+      <td>PRIMARY KEY</td>
+      <td>Unique conversation session ID.</td>
+    </tr>
+    <tr>
+      <td><code>conversations</code></td>
+      <td><code>title</code></td>
+      <td><code>TEXT</code></td>
+      <td>NOT NULL</td>
+      <td>Auto-generated discussion title or initial topic.</td>
+    </tr>
+    <tr>
+      <td><code>conversations</code></td>
+      <td><code>created_at</code></td>
+      <td><code>TIMESTAMPTZ</code></td>
+      <td>DEFAULT NOW()</td>
+      <td>Timestamp with timezone for global user accuracy.</td>
+    </tr>
+    <tr>
+      <td><code>messages</code></td>
+      <td><code>id</code></td>
+      <td><code>SERIAL</code></td>
+      <td>PRIMARY KEY</td>
+      <td>Unique message identifier.</td>
+    </tr>
+    <tr>
+      <td><code>messages</code></td>
+      <td><code>conversation_id</code></td>
+      <td><code>INTEGER</code></td>
+      <td>FOREIGN KEY</td>
+      <td>References <code>conversations.id</code> with <code>ON DELETE CASCADE</code>.</td>
+    </tr>
+    <tr>
+      <td><code>messages</code></td>
+      <td><code>role</code></td>
+      <td><code>TEXT</code></td>
+      <td>NOT NULL</td>
+      <td>Message actor: <code>"user"</code>, <code>"assistant"</code>, or <code>"system"</code>.</td>
+    </tr>
+    <tr>
+      <td><code>messages</code></td>
+      <td><code>content</code></td>
+      <td><code>TEXT</code></td>
+      <td>NOT NULL</td>
+      <td>Raw message body or streaming markdown tokens.</td>
+    </tr>
+    <tr>
+      <td><code>messages</code></td>
+      <td><code>created_at</code></td>
+      <td><code>TIMESTAMPTZ</code></td>
+      <td>DEFAULT NOW()</td>
+      <td>Chronological ordering index for dialogue reconstruction.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>4. Core Code Implementations</h2>
+
+<h3>4.1 Database Connection Pool &amp; Client Export (<code>lib/db/src/index.js</code>)</h3>
+<pre>
+import { drizzle } from "drizzle-orm/node-postgres";
+import pg from "pg";
+import * as schema from "./schema/index.js";
+
+const { Pool } = pg;
+
+// Initialize connection pool only when DATABASE_URL environment variable is provided
+export const pool = process.env.DATABASE_URL
+  ? new Pool({ connectionString: process.env.DATABASE_URL })
+  : null;
+
+// Export initialized Drizzle instance or null for graceful offline fallback
+export const db = pool ? drizzle(pool, { schema }) : null;
+
+export * from "./schema/index.js";
+</pre>
+
+<h3>4.2 Relational Drizzle Schema Definition (<code>lib/db/src/schema/analyses.js</code>)</h3>
+<pre>
+import { pgTable, text, serial, integer, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+
+export const analyses = pgTable("analyses", {
+  id: serial("id").primaryKey(),
+  content: text("content").notNull(),
+  sourceType: text("source_type").notNull(),
+  prediction: text("prediction").notNull(),
+  confidence: integer("confidence").notNull(),
+  explanation: text("explanation").notNull(),
+  keywords: text("keywords").array(),
+  detectedSource: jsonb("detected_source"),
+  additionalSources: jsonb("additional_sources"),
+  mediaType: text("media_type").default("text"),
+  geminiVerification: jsonb("gemini_verification").default(null),
+  factBreakdown: jsonb("fact_breakdown").default(null),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const analysisResults = pgTable("analysis_results", {
+  id: serial("id").primaryKey(),
+  analysisId: integer("analysis_id").notNull(),
+  verifiedArticles: jsonb("verified_articles").default([]),
+});
+
+export const insertAnalysisSchema = createInsertSchema(analyses).omit({
+  id: true,
+  createdAt: true,
+});
+</pre>
+
+<h3>4.3 High-Performance SQL Aggregations for Analytics (<code>GET /api/stats</code>)</h3>
+<pre>
+// PostgreSQL Native Query using unnest() for tag frequency calculation
+const trending = await db.execute(sql`
+  SELECT unnest(keywords) as topic, count(*) as count
+  FROM analyses
+  GROUP BY topic
+  ORDER BY count DESC
+  LIMIT 5;
+`);
+
+// Parallelized metric counters
+const [total, real, fake, misleading] = await Promise.all([
+  db.select({ count: sql`count(*)` }).from(analyses),
+  db.select({ count: sql`count(*)` }).from(analyses).where(eq(analyses.prediction, "Real")),
+  db.select({ count: sql`count(*)` }).from(analyses).where(eq(analyses.prediction, "Fake")),
+  db.select({ count: sql`count(*)` }).from(analyses).where(eq(analyses.prediction, "Misleading")),
+]);
+</pre>
+
+<div class="page-break"></div>
+
+<h2>5. Dual-Persistence Resiliency Strategy</h2>
+<p>
+A core strength of the SatyaCheck architecture is that database network dropouts, credential rotation delays, or local offline evaluation never prevent the user from completing fact-checks. The system implements a robust <strong>Failover Storage Handler</strong>:
+</p>
+
+<pre>
+const STORAGE_FILE = path.resolve(process.cwd(), "analyses-storage.json");
+
+function loadLocalAnalyses() {
+  try {
+    if (fs.existsSync(STORAGE_FILE)) {
+      return JSON.parse(fs.readFileSync(STORAGE_FILE, "utf-8"));
+    }
+  } catch {}
+  return [];
+}
+
+function saveLocalAnalysis(entry) {
+  try {
+    const list = loadLocalAnalyses();
+    list.unshift(entry);
+    // Persist latest 100 entries atomically
+    fs.writeFileSync(STORAGE_FILE, JSON.stringify(list.slice(0, 100), null, 2), "utf-8");
+  } catch (err) {
+    console.error("Local storage write error:", err);
+  }
+}
+</pre>
+
+<h2>6. PostgreSQL vs. MongoDB Comparison</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Evaluation Criterion</th>
+      <th>PostgreSQL + Drizzle ORM (Selected)</th>
+      <th>MongoDB / NoSQL Alternative</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Data Consistency</strong></td>
+      <td>Strict ACID guarantees across relational chat &amp; analysis tables.</td>
+      <td>BASE / Eventual consistency; lacks native multi-table constraints.</td>
+    </tr>
+    <tr>
+      <td><strong>Structured + JSON Hybrid</strong></td>
+      <td>Native <code>JSONB</code> enables indexed JSON querying alongside relational keys.</td>
+      <td>All data stored as BSON; lacks native relational foreign keys.</td>
+    </tr>
+    <tr>
+      <td><strong>Resource Footprint</strong></td>
+      <td>Lightweight connection pool; zero memory leaks with pure JS driver.</td>
+      <td>Heavy mongod daemon, elevated RAM overhead for index caches.</td>
+    </tr>
+    <tr>
+      <td><strong>Analytical Queries</strong></td>
+      <td>Fast native SQL <code>GROUP BY</code>, <code>unnest()</code>, and window functions.</td>
+      <td>Requires complex aggregation pipelines with higher compute cost.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>7. Viva &amp; Technical Defense Q&amp;A</h2>
+<div class="callout">
+  <strong>Q1: Why did you choose Drizzle ORM over Prisma?</strong><br>
+  <em>A:</em> Prisma relies on an external Rust binary query engine (over 40MB) which adds cold-start latency and compilation friction. Drizzle is a lightweight, zero-dependency SQL query builder written in pure JavaScript that generates clean SQL matching native queries, running effortlessly in ES Modules.
+</div>
+<div class="callout">
+  <strong>Q2: Why did you use PostgreSQL instead of MongoDB?</strong><br>
+  <em>A:</em> SatyaCheck requires relational integrity between conversations and messages (cascade deletes), as well as complex analytical aggregations on keywords and prediction counts. PostgreSQL's native <code>JSONB</code> type gives us the exact flexibility of MongoDB documents while preserving strict foreign key constraints and ACID safety.
+</div>
+<div class="callout">
+  <strong>Q3: How does the system behave if the PostgreSQL database goes down?</strong><br>
+  <em>A:</em> The application uses a defensive dual-mode architecture. When <code>DATABASE_URL</code> is absent or the connection throws an exception, all read and write queries automatically redirect to <code>analyses-storage.json</code>. The frontend UI continues functioning without throwing HTTP 500 errors.
+</div>
+
+<div class="footer-note">
+  SatyaCheck Project Specification Dossier • Role 3: Database Architecture • Page 2 of 3
+</div>
+
+</body>
+</html>

@@ -3,9 +3,11 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "build": "pnpm run typecheck && pnpm -r --if-present run build",
-    "typecheck:libs": "tsc --build",
-    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
+    "dev": "node --env-file=.env artifacts/api-server/src/index.js",
+    "dev:backend": "node --env-file=.env artifacts/api-server/src/index.js",
+    "dev:frontend": "cd frontend-js && npm run dev",
+    "start": "node --env-file=.env artifacts/api-server/src/index.js",
+    "build": "pnpm -r --if-present run build"
   },
   "private": true,
   "devDependencies": {
