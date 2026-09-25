@@ -2,59 +2,35 @@
 
 <div align="center">
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/shivamrana200526-beep/Fake-News-Detection-System)
 [![Node.js](https://img.shields.io/badge/Node.js-20+-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
-[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![Express](https://img.shields.io/badge/Express-5-000000?logo=express&logoColor=white)](https://expressjs.com/)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 **"Satya" means Truth in Sanskrit.**
 
-SatyaCheck is a full-stack web application that uses locally-running AI to detect whether a news article, claim, or social media post is **Real**, **Fake**, or **Misleading** — with no external API costs, no data sent to third parties, and no internet dependency for analysis.
+SatyaCheck is a full-stack web application that detects whether a news article, claim, or social media post is **Real**, **Fake**, or **Misleading** — powered by a local Ollama AI model with automatic fallback to a free cloud AI (no API key required) and a built-in heuristic engine.
 
 </div>
-
----
-
-## 📋 Table of Contents
-
-- [Team & Roles](#-team--roles)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-- [API Reference](#-api-reference)
-- [Environment Variables](#-environment-variables)
-- [Deployment](#-deployment)
-- [Contributing](#-contributing)
 
 ---
 
 ## 👥 Team & Roles
 
 This project is built by a team of 4 engineers, each owning a specific domain.
-**Each person's full technical documentation (code samples + file ownership) is in their PDF below.**
 
-| Role | Lead Engineer | PDF File | Key Files Owned |
-|------|--------------|----------|-----------------|
-| 🎨 **Role 1 — Frontend** | **Tanush** | [`Role_1_Tanush_Frontend_Development.pdf`](SatyaCheck_Roles_PDFs/Role_1_Tanush_Frontend_Development.pdf) | `frontend-js/src/App.jsx` · `pages/Detect.jsx` · `pages/Chat.jsx` · `pages/Dashboard.jsx` · `pages/History.jsx` · `pages/Credibility.jsx` · `pages/Trending.jsx` · `pages/Quiz.jsx` · `pages/Forward.jsx` · `pages/Login.jsx` · `hooks/use-analysis.js` · `hooks/use-theme.js` · `hooks/use-voice-input.js` · `components/layout/Navbar.jsx` · `vite.config.js` · `frontend-js/vercel.json` |
-| ⚙️ **Role 2 — Backend** | **Shivam** | [`Role_2_Shivam_Backend_Development.pdf`](SatyaCheck_Roles_PDFs/Role_2_Shivam_Backend_Development.pdf) | `artifacts/api-server/src/app.js` · `src/index.js` · `routes/index.js` · `routes/analyze.js` · `routes/chat.js` · `routes/auth.js` · `routes/health.js` · `lib/scraper.js` · `lib/logger.js` · `api/index.js` · `setup-and-run.ps1` · `vercel.json` |
-| 🗄️ **Role 3 — Database** | **Pranav** | [`Role_3_Pranav_Database_Architecture.pdf`](SatyaCheck_Roles_PDFs/Role_3_Pranav_Database_Architecture.pdf) | `lib/db/src/schema/analyses.js` · `schema/conversations.js` · `schema/messages.js` · `schema/index.js` · `lib/db/src/index.js` · `lib/db/drizzle.config.js` |
-| 🤖 **Role 4 — AI & API** | **Simar** | [`Role_4_Simar_AI_and_API_Integration.pdf`](SatyaCheck_Roles_PDFs/Role_4_Simar_AI_and_API_Integration.pdf) | `artifacts/api-server/src/lib/ai-service.js` · `routes/chat.js` (AI logic) · `routes/analyze.js` (prompts) · `routes/quiz.js` · `routes/trending.js` · `routes/credibility.js` |
+| Role | Lead Engineer | Key Files Owned |
+|------|--------------|-----------------|
+| 🎨 **Role 1 — Frontend** | **Tanush** | `frontend-js/src/App.jsx` · all `pages/` · `components/layout/` · `hooks/` · `contexts/AuthContext.jsx` |
+| ⚙️ **Role 2 — Backend** | **Shivam** | `artifacts/api-server/src/app.js` · `index.js` · `routes/auth.js` · `routes/health.js` · `lib/scraper.js` · `lib/logger.js` · `api/index.js` |
+| 🗄️ **Role 3 — Database** | **Pranav** | `lib/db/src/schema/analyses.js` · `conversations.js` · `messages.js` · `lib/db/src/index.js` |
+| 🤖 **Role 4 — AI & API** | **Simar** | `lib/ai-service.js` · `routes/analyze.js` · `routes/chat.js` · `routes/quiz.js` · `routes/trending.js` · `routes/credibility.js` |
 
-### 📂 How to find your file
+### 📂 How to find your files
 
-**On GitHub** → Click [`SatyaCheck_Roles_PDFs/`](SatyaCheck_Roles_PDFs/) folder → click your PDF.
+**On GitHub** → browse the repository folder structure below.
 
-**After cloning** → look inside `SatyaCheck_Roles_PDFs/` folder:
-
-```
-SatyaCheck_Roles_PDFs/
-├── Role_1_Tanush_Frontend_Development.pdf       ← Tanush open this
-├── Role_2_Shivam_Backend_Development.pdf        ← Shivam open this
-├── Role_3_Pranav_Database_Architecture.pdf      ← Pranav open this
-└── Role_4_Simar_AI_and_API_Integration.pdf      ← Simar open this
-```
+**After cloning** → open the folder matching your role from the project structure section.
 
 ---
 
@@ -62,42 +38,52 @@ SatyaCheck_Roles_PDFs/
 
 | Feature | Description |
 |---------|-------------|
-| 🔍 **AI Fact-Check** | Paste any text, URL, or claim — get a verdict with confidence score |
-| 💬 **AI Chat** | Ask follow-up questions about any fact-checked claim |
-| 📊 **Source Credibility** | Rate any news domain or source for trustworthiness |
-| 📰 **Trending Misinformation** | Live feed of currently circulating fake stories |
-| 🧠 **Media Literacy Quiz** | 10-question daily quiz to sharpen your fact-checking skills |
+| 🔍 **AI Fact-Check** | Paste any text, URL, headline, or image — get a verdict with confidence score |
+| 💬 **AI Chat** | SSE-streaming forensic chat assistant for follow-up questions |
+| 📊 **Source Credibility** | Rate any news domain for media bias and reliability |
+| 📰 **Trending Misinformation** | Feed of currently circulating fake stories |
+| 🧠 **Media Literacy Quiz** | 10-question daily quiz to sharpen fact-checking skills |
 | 🔐 **Authentication** | Email/password register & login + Google Sign-In |
 | 📈 **Analysis History** | Persistent history of all past fact-checks |
-| 🔒 **100% Local AI** | Powered by Ollama — no API keys, no data leaves your machine |
+| 🤖 **3-Tier AI** | Local Ollama → free pollinations.ai → built-in heuristics (no API key ever needed) |
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Backend (`artifacts/api-server/`)
-| Technology | Purpose |
-|-----------|---------|
-| **Node.js 20+** | Runtime — ES Modules (ESM) |
-| **Express 5** | Web framework & REST API |
-| **Ollama** | Local AI model runner |
-| **crypto** (built-in) | Password hashing (scrypt), token generation |
-| **fs / path** (built-in) | File-based storage fallback |
-| **Pino** | Structured JSON logging |
-| **CORS** | Cross-origin request handling |
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| **Node.js** | 20+ | Runtime — ES Modules (`"type": "module"`) |
+| **Express** | 5 | Web framework & REST API |
+| **Pino** | 9 | Structured JSON logging with secret redaction |
+| **node:crypto** | built-in | Password hashing (scrypt), token generation |
+| **node:fs** | built-in | File-based JSON storage fallback |
+| **openai** SDK | 7 | OpenAI-compatible client for Ollama local AI |
 
 ### Frontend (`frontend-js/`)
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| **React** | 19.1.0 | UI framework |
+| **Vite** | 7 | Dev server & build tool |
+| **Tailwind CSS** | v4 | Utility-first styling |
+| **wouter** | 3 | Lightweight client-side router |
+| **@tanstack/react-query** | 5 | Server state & caching |
+| **framer-motion** | 12 | Page transition animations |
+
+### Database (`lib/db/`)
 | Technology | Purpose |
 |-----------|---------|
-| **React 18** | UI framework |
-| **Vite** | Dev server & build tool |
-| **Tailwind CSS v4** | Utility-first styling |
-| **shadcn/ui** | Pre-built accessible components |
+| **PostgreSQL** | Relational database (optional — app falls back to JSON files if not configured) |
+| **Drizzle ORM** | Type-safe query builder and schema manager |
+| **drizzle-zod** | Auto-generates Zod insert validators from schema |
 
-### AI Model
-| Model | Runner | Notes |
-|-------|--------|-------|
-| `llama3.2:1b` | Ollama | Runs 100% locally, ~700MB download |
+### AI Layer
+| Tier | Provider | Notes |
+|------|----------|-------|
+| Tier 1 | **Ollama** (local) | `llama3.2:1b` — runs on your machine, 4s timeout |
+| Tier 2 | **pollinations.ai** (free cloud) | Zero API key required, works on Vercel |
+| Tier 3 | **Built-in heuristics** | 9 verified fact patterns, pure JS, offline |
 
 ---
 
@@ -106,51 +92,58 @@ SatyaCheck_Roles_PDFs/
 ```
 Fake-News-Defense/
 ├── artifacts/
-│   └── api-server/              # Express REST API backend (Shivam)
+│   └── api-server/              # Express REST API (Shivam)
+│       ├── package.json
 │       └── src/
-│           ├── index.js         # Server entry point
-│           ├── app.js           # Express app, middleware, CORS
+│           ├── index.js         # Server entry point, PORT validation
+│           ├── app.js           # Express app, CORS, pino-http, static serving
 │           ├── lib/
-│           │   ├── ai-service.js  # Multi-tier AI engine (Simran)
-│           │   ├── scraper.js     # URL article extractor (Shivam)
-│           │   └── logger.js      # Structured Pino logging (Shivam)
+│           │   ├── ai-service.js  # 3-tier AI engine (Simar)
+│           │   ├── scraper.js     # URL HTML scraper (Shivam)
+│           │   └── logger.js      # Pino structured logger (Shivam)
 │           └── routes/
-│               ├── index.js       # Route aggregator (Shivam)
-│               ├── auth.js        # /api/auth/* — register, login (Shivam)
-│               ├── analyze.js     # /api/analyze — AI fact-check (Shivam + Simran)
-│               ├── chat.js        # /api/chat — SSE streaming (Shivam + Simran)
-│               ├── credibility.js # /api/credibility (Simran)
-│               ├── trending.js    # /api/trending (Simran)
-│               ├── quiz.js        # /api/quiz (Simran)
+│               ├── index.js       # Route registry (Shivam)
+│               ├── auth.js        # /api/auth/* — register, login, google (Shivam)
+│               ├── users.js       # /api/users — session-protected admin log (Shivam)
 │               ├── health.js      # /api/healthz (Shivam)
-│               └── users.js       # /api/users/* (Shivam)
+│               ├── analyze.js     # /api/analyze — AI fact-check (Simar)
+│               ├── chat.js        # /api/chat — SSE streaming chat (Simar)
+│               ├── credibility.js # /api/credibility (Simar)
+│               ├── trending.js    # /api/trending (Simar)
+│               └── quiz.js        # /api/quiz (Simar)
 ├── api/
-│   └── index.js                 # Vercel serverless gateway (Shivam)
-├── frontend-js/                 # React + Vite frontend (Tanush)
+│   └── index.js                 # Vercel serverless adapter
+├── frontend-js/                 # React 19 + Vite frontend (Tanush)
 │   ├── src/
-│   │   ├── App.jsx              # Router shell
-│   │   ├── pages/               # Home, Detect, Chat, Dashboard, History...
-│   │   ├── components/          # Navbar, Footer, UI primitives
-│   │   ├── contexts/            # AuthContext
-│   │   └── hooks/               # use-analysis, use-theme, use-voice-input
+│   │   ├── App.jsx              # Router, ProtectedRoute, AnimatePresence
+│   │   ├── main.jsx             # React DOM entry point
+│   │   ├── pages/               # Home, Detect, Chat, Dashboard, History,
+│   │   │                        # Credibility, Trending, Quiz, Forward,
+│   │   │                        # Education, About, Login, not-found
+│   │   ├── components/
+│   │   │   ├── layout/          # Navbar, Footer, PageWrapper
+│   │   │   └── ui/              # 40+ shadcn/Radix UI components
+│   │   ├── contexts/
+│   │   │   └── AuthContext.jsx  # Auth state, Firebase + backend session
+│   │   ├── hooks/               # use-analysis, use-auth, use-voice-input,
+│   │   │                        # use-theme, use-toast, use-mobile
+│   │   └── lib/
+│   │       ├── utils.js         # Tailwind class merge utility
+│   │       └── firebase.js      # Firebase SDK init (Google auth)
+│   ├── vite.config.js
 │   └── vercel.json              # SPA rewrite rules
 ├── lib/
-│   └── db/                      # Drizzle ORM schema (Pranav)
+│   └── db/                      # Drizzle ORM database layer (Pranav)
 │       └── src/
 │           ├── schema/
-│           │   ├── analyses.js  # Forensic analysis table
+│           │   ├── analyses.js  # analyses + analysisResults tables
 │           │   ├── conversations.js
 │           │   ├── messages.js
 │           │   └── index.js
-│           └── index.js         # Database client factory
-├── SatyaCheck_Roles_PDFs/       # Team role documentation
-│   ├── Role_1_Tanush_Frontend_Development.pdf
-│   ├── Role_2_Shivam_Backend_Development.pdf
-│   ├── Role_3_Pranav_Database_Architecture.pdf
-│   └── Role_4_Simar_AI_and_API_Integration.pdf
+│           └── index.js         # pg Pool + Drizzle client, null-safe
 ├── vercel.json                  # Root Vercel build config
 ├── .env.example                 # Environment variable template
-├── .gitignore                   # Excludes .env, node_modules, user data
+├── .gitignore
 └── README.md
 ```
 
@@ -160,13 +153,11 @@ Fake-News-Defense/
 
 ### Prerequisites
 
-Make sure the following are installed before running the project:
-
 | Requirement | Version | Install |
 |-------------|---------|---------|
 | **Node.js** | 20+ | [nodejs.org](https://nodejs.org/) |
 | **pnpm** | 8+ | `npm install -g pnpm` |
-| **Ollama** | Latest | [ollama.com/download](https://ollama.com/download) |
+| **Ollama** | Latest | [ollama.com/download](https://ollama.com/download) *(optional — app works without it)* |
 
 ### 1. Clone the Repository
 
@@ -178,34 +169,35 @@ cd Fake-News-Detection-System
 ### 2. Set Up Environment Variables
 
 ```bash
-# Copy the example env file
 cp .env.example .env
 ```
 
-The default values in `.env` work out of the box — no changes needed for local development.
+The defaults in `.env.example` work out of the box — no changes needed for local development.
 
-> ⚠️ **Never commit `.env` to Git.** It is already listed in `.gitignore`.
+> ⚠️ **Never commit `.env` to Git.** It is listed in `.gitignore`.
 
 ### 3. Install Dependencies
 
 ```bash
-# Install all workspace dependencies from the root
+# Install all workspace packages from the root
 pnpm install
 
-# Install frontend dependencies separately
+# Install frontend dependencies separately (uses npm)
 cd frontend-js && npm install && cd ..
 ```
 
-### 4. Download the AI Model (First Time Only)
+### 4. Download the AI Model (Optional — for best results)
 
 ```bash
-# Pull the AI model (~700MB, one-time download)
+# One-time download (~700 MB)
 ollama pull llama3.2:1b
 ```
 
+> If Ollama is not running, the app automatically falls back to the free `pollinations.ai` cloud AI, then to the built-in heuristic engine. Nothing breaks.
+
 ### 5. Start the Application
 
-**Terminal 1 — AI Model:**
+**Terminal 1 — AI Model (optional):**
 ```bash
 ollama serve
 ```
@@ -238,10 +230,10 @@ npm run dev
 
 | Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
-| `POST` | `/api/auth/register` | Create a new account | No |
+| `POST` | `/api/auth/register` | Register with email & password | No |
 | `POST` | `/api/auth/login` | Sign in with email & password | No |
-| `POST` | `/api/auth/google` | Sign in with Google | No |
-| `GET` | `/api/auth/me` | Get current user session | Yes (Bearer token) |
+| `POST` | `/api/auth/google` | Sign in / register via Google | No |
+| `GET` | `/api/auth/me` | Get current session user | Yes (Bearer token) |
 | `POST` | `/api/auth/forgot-password` | Request password reset | No |
 
 ### Core Features
@@ -249,11 +241,11 @@ npm run dev
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `GET` | `/api/healthz` | Server health check |
-| `POST` | `/api/analyze` | Run AI fact-check on a claim or URL |
-| `GET` | `/api/history` | Get past analysis results |
-| `GET` | `/api/stats` | Analysis statistics |
-| `POST` | `/api/chat` | Streaming AI chat (Server-Sent Events) |
-| `GET` | `/api/credibility?domain=<url>` | Source credibility rating |
+| `POST` | `/api/analyze` | Run AI fact-check (`{content, type}`) |
+| `GET` | `/api/history` | Past analysis results |
+| `GET` | `/api/stats` | Analysis statistics (total / real / fake / misleading) |
+| `POST` | `/api/chat` | Streaming AI chat — Server-Sent Events |
+| `POST` | `/api/credibility` | Source credibility rating (`{source}`) |
 | `GET` | `/api/trending` | Trending misinformation stories |
 | `GET` | `/api/quiz` | Daily media literacy quiz |
 
@@ -262,17 +254,17 @@ npm run dev
 ```bash
 curl -X POST http://localhost:3000/api/analyze \
   -H "Content-Type: application/json" \
-  -d '{"content": "Drinking bleach cures COVID-19", "sourceType": "text"}'
+  -d '{"content": "Drinking bleach cures COVID-19", "type": "text"}'
 ```
 
 **Response:**
 ```json
 {
   "prediction": "Fake",
-  "confidence": 99,
-  "explanation": "This claim is medically dangerous and completely false.",
-  "keywords": ["bleach", "COVID-19"],
-  "manipulationScore": 95
+  "confidence": 100,
+  "explanation": "Bleach is a toxic chemical. Ingesting it is life-threatening and does not cure any disease.",
+  "keywords": ["verified-fact", "historical-record"],
+  "manipulationScore": 85
 }
 ```
 
@@ -280,15 +272,27 @@ curl -X POST http://localhost:3000/api/analyze \
 
 ## ⚙️ Environment Variables
 
-Create a `.env` file in the project root. See [`.env.example`](.env.example) for a full template.
+Create a `.env` file in the project root (copy from `.env.example`).
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `PORT` | No | `3000` | Backend server port |
 | `NODE_ENV` | No | `development` | `development` or `production` |
-| `OLLAMA_BASE_URL` | No | `http://127.0.0.1:11434/v1` | Ollama API endpoint |
-| `OLLAMA_MODEL` | No | `llama3.2:1b` | AI model to use |
-| `DATABASE_URL` | No | — | PostgreSQL connection string. If not set, the app uses local JSON file storage automatically |
+| `OLLAMA_BASE_URL` | No | `http://127.0.0.1:11434/v1` | Ollama API base URL |
+| `OLLAMA_MODEL` | No | `llama3.2:1b` | Local AI model name |
+| `DATABASE_URL` | No | — | PostgreSQL connection string. If omitted, app uses `analyses-storage.json` automatically |
+
+---
+
+## 🔒 Security
+
+- Passwords hashed with **`crypto.scryptSync`** + unique random salt — never stored in plaintext
+- Session tokens generated with **`crypto.randomBytes(32)`** — cryptographically secure
+- **`crypto.timingSafeEqual`** used for password comparison — prevents timing attacks
+- `passwordHash` and `token` fields are **stripped from all API responses** via `sanitizeUser()`
+- `GET /api/users` requires a valid Bearer session token — not publicly accessible
+- `.env`, `users-storage.json`, `analyses-storage.json` are excluded from Git via `.gitignore`
+- Forgot-password always returns success — prevents email enumeration
 
 ---
 
@@ -297,70 +301,54 @@ Create a `.env` file in the project root. See [`.env.example`](.env.example) for
 | Problem | Cause | Fix |
 |---------|-------|-----|
 | `Error: .env file not found` | Missing `.env` | Run `cp .env.example .env` |
-| `Cannot find module '@workspace/db'` | Dependencies not installed | Run `pnpm install` from root |
-| `ECONNREFUSED 11434` | Ollama not running | Run `ollama serve` in a terminal |
-| `Port 3000 already in use` | Another process on port 3000 | Change `PORT=3001` in `.env` |
-| `pnpm: command not found` | pnpm not installed | Run `npm install -g pnpm` |
-| Frontend API errors (CORS) | Backend not running | Start backend first on port 3000 |
+| `Cannot find module '@workspace/db'` | pnpm deps not installed | Run `pnpm install` from root |
+| `ECONNREFUSED 11434` | Ollama not running | Run `ollama serve` — or ignore, app falls back automatically |
+| `Port 3000 already in use` | Port conflict | Set `PORT=3001` in `.env` |
+| `pnpm: command not found` | pnpm not installed | `npm install -g pnpm` |
+| Frontend CORS errors | Backend not running | Start backend first on port 3000 |
 
 ---
 
 ## 🌐 Deployment
 
-### Environment Setup for Production
+### Vercel (Recommended)
 
-When deploying (Render, Railway, Vercel, etc.), set these environment variables in your platform's dashboard:
+1. Push this repo to GitHub
+2. Go to [vercel.com](https://vercel.com) → **Add New Project** → select this repo
+3. Vercel auto-detects `vercel.json` at the root — no manual build config needed
+4. Add environment variables in the Vercel dashboard if you want a PostgreSQL database
 
-```
-NODE_ENV=production
-PORT=3000
-OLLAMA_BASE_URL=<your-ollama-endpoint>
-OLLAMA_MODEL=llama3.2:1b
-DATABASE_URL=<your-postgresql-connection-string>
-```
+The `vercel.json` at the root handles:
+- Building the frontend (`frontend-js/`)
+- Routing all `/api/*` requests to `api/index.js` serverless function
+- Redirecting all other routes to `index.html` (SPA routing)
 
-> **Note:** Ollama must be hosted separately or use a compatible API endpoint for cloud deployment.
+> **Note:** On Vercel, Ollama cannot run locally. The app automatically uses the free `pollinations.ai` cloud AI fallback — no configuration needed.
 
-### Build for Production
+### Self-Hosted (Render / Railway / VPS)
 
 ```bash
-# Build the frontend
-cd frontend-js && npm run build
-
-# The Express backend will serve the built frontend from /dist in production
+NODE_ENV=production
+PORT=3000
+OLLAMA_BASE_URL=<your-ollama-server-url>
+DATABASE_URL=<your-postgresql-connection-string>
 ```
-
----
-
-## 🔒 Security
-
-- Passwords are hashed using **`crypto.scryptSync`** with a unique salt per user — never stored in plain text
-- Session tokens are generated with **`crypto.randomBytes(32)`** — cryptographically secure
-- **`crypto.timingSafeEqual`** is used for password comparison to prevent timing attacks
-- `.env` files are excluded from version control via `.gitignore`
-- User data files (`users-storage.json`, `analyses-storage.json`) are excluded from Git
-
----
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Commit your changes: `git commit -m "feat: add your feature"`
-4. Push to the branch: `git push origin feature/your-feature`
-5. Open a Pull Request
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+MIT License — see [LICENSE](LICENSE).
 
 ---
 
-## 👨‍💻 Author
+## 👨‍💻 Authors
 
-**Shivam Rana**
-GitHub: [@shivamrana200526-beep](https://github.com/shivamrana200526-beep)
+| Name | Role | GitHub |
+|------|------|--------|
+| **Shivam** | Backend Development | [@shivamrana200526-beep](https://github.com/shivamrana200526-beep) |
+| **Tanush** | Frontend Development | — |
+| **Pranav** | Database Architecture | — |
+| **Simar** | AI & API Integration | — |
 
-> Built as a college final-year project. AI tools were used for scaffolding. Project architecture, AI integration, prompt engineering, and implementation decisions were developed by the author.
+> Built as a college project. SatyaCheck uses no external paid APIs — all AI runs locally via Ollama or the free pollinations.ai fallback.

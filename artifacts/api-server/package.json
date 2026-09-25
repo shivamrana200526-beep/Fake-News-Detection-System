@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "@workspace/db": "workspace:*",
-    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "drizzle-orm": "^0.45.1",
     "express": "^5.0.1",

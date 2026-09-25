@@ -36,3 +36,12 @@ Thumbs.db
 
 # ─── pnpm ─────────────────────────────────────────────────────
 .pnpm-store/
+
+# ─── Large binary / archive files (no value in Git) ──────────
+*.zip
+*.pdf
+attached_assets/
+SatyaCheck-Backend-Engineering-Guide.pdf
+SatyaCheck-Frontend-Code.zip
+SatyaCheck-Project-Report.pdf
+frontend-js.zip
