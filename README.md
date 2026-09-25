@@ -18,6 +18,7 @@ SatyaCheck is a full-stack web application that uses locally-running AI to detec
 
 ## 📋 Table of Contents
 
+- [Team & Roles](#-team--roles)
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
 - [Project Structure](#-project-structure)
@@ -26,6 +27,34 @@ SatyaCheck is a full-stack web application that uses locally-running AI to detec
 - [Environment Variables](#-environment-variables)
 - [Deployment](#-deployment)
 - [Contributing](#-contributing)
+
+---
+
+## 👥 Team & Roles
+
+This project is built by a team of 4 engineers, each owning a specific domain.
+**Each person's full technical documentation (code samples + file ownership) is in their PDF below.**
+
+| Role | Lead Engineer | PDF File | Key Files Owned |
+|------|--------------|----------|-----------------|
+| 🎨 **Role 1 — Frontend** | **Tanush** | [`Role_1_Tanush_Frontend_Development.pdf`](SatyaCheck_Roles_PDFs/Role_1_Tanush_Frontend_Development.pdf) | `frontend-js/src/App.jsx` · `pages/Detect.jsx` · `pages/Chat.jsx` · `pages/Dashboard.jsx` · `pages/History.jsx` · `pages/Credibility.jsx` · `pages/Trending.jsx` · `pages/Quiz.jsx` · `pages/Forward.jsx` · `pages/Login.jsx` · `hooks/use-analysis.js` · `hooks/use-theme.js` · `hooks/use-voice-input.js` · `components/layout/Navbar.jsx` · `vite.config.js` · `frontend-js/vercel.json` |
+| ⚙️ **Role 2 — Backend** | **Shivam** | [`Role_2_Shivam_Backend_Development.pdf`](SatyaCheck_Roles_PDFs/Role_2_Shivam_Backend_Development.pdf) | `artifacts/api-server/src/app.js` · `src/index.js` · `routes/index.js` · `routes/analyze.js` · `routes/chat.js` · `routes/auth.js` · `routes/health.js` · `lib/scraper.js` · `lib/logger.js` · `api/index.js` · `setup-and-run.ps1` · `vercel.json` |
+| 🗄️ **Role 3 — Database** | **Pranav** | [`Role_3_Pranav_Database_Architecture.pdf`](SatyaCheck_Roles_PDFs/Role_3_Pranav_Database_Architecture.pdf) | `lib/db/src/schema/analyses.js` · `schema/conversations.js` · `schema/messages.js` · `schema/index.js` · `lib/db/src/index.js` · `lib/db/drizzle.config.js` |
+| 🤖 **Role 4 — AI & API** | **Simran** | [`Role_4_Simran_AI_and_API_Integration.pdf`](SatyaCheck_Roles_PDFs/Role_4_Simran_AI_and_API_Integration.pdf) | `artifacts/api-server/src/lib/ai-service.js` · `routes/chat.js` (AI logic) · `routes/analyze.js` (prompts) · `routes/quiz.js` · `routes/trending.js` · `routes/credibility.js` |
+
+### 📂 How to find your file
+
+**On GitHub** → Click [`SatyaCheck_Roles_PDFs/`](SatyaCheck_Roles_PDFs/) folder → click your PDF.
+
+**After cloning** → look inside `SatyaCheck_Roles_PDFs/` folder:
+
+```
+SatyaCheck_Roles_PDFs/
+├── Role_1_Tanush_Frontend_Development.pdf       ← Tanush open this
+├── Role_2_Shivam_Backend_Development.pdf        ← Shivam open this
+├── Role_3_Pranav_Database_Architecture.pdf      ← Pranav open this
+└── Role_4_Simran_AI_and_API_Integration.pdf     ← Simran open this
+```
 
 ---
 
@@ -77,29 +106,51 @@ SatyaCheck is a full-stack web application that uses locally-running AI to detec
 ```
 Fake-News-Defense/
 ├── artifacts/
-│   └── api-server/              # Express REST API backend
+│   └── api-server/              # Express REST API backend (Shivam)
 │       └── src/
-│           ├── index.js         # Entry point — starts server
+│           ├── index.js         # Server entry point
 │           ├── app.js           # Express app, middleware, CORS
+│           ├── lib/
+│           │   ├── ai-service.js  # Multi-tier AI engine (Simran)
+│           │   ├── scraper.js     # URL article extractor (Shivam)
+│           │   └── logger.js      # Structured Pino logging (Shivam)
 │           └── routes/
-│               ├── index.js     # Route aggregator
-│               ├── auth.js      # /api/auth/* — register, login, token
-│               ├── analyze.js   # /api/analyze — AI fact-check
-│               ├── chat.js      # /api/chat — streaming AI chat
-│               ├── credibility.js # /api/credibility
-│               ├── trending.js  # /api/trending
-│               ├── quiz.js      # /api/quiz
-│               └── users.js     # /api/users/*
-├── frontend-js/                 # React + Vite frontend
-│   └── src/
-│       ├── pages/               # Login, Home, Detect, Chat, Quiz…
-│       ├── components/          # Shared UI components
-│       ├── contexts/            # AuthContext (session management)
-│       └── hooks/               # useAuth, custom hooks
+│               ├── index.js       # Route aggregator (Shivam)
+│               ├── auth.js        # /api/auth/* — register, login (Shivam)
+│               ├── analyze.js     # /api/analyze — AI fact-check (Shivam + Simran)
+│               ├── chat.js        # /api/chat — SSE streaming (Shivam + Simran)
+│               ├── credibility.js # /api/credibility (Simran)
+│               ├── trending.js    # /api/trending (Simran)
+│               ├── quiz.js        # /api/quiz (Simran)
+│               ├── health.js      # /api/healthz (Shivam)
+│               └── users.js       # /api/users/* (Shivam)
+├── api/
+│   └── index.js                 # Vercel serverless gateway (Shivam)
+├── frontend-js/                 # React + Vite frontend (Tanush)
+│   ├── src/
+│   │   ├── App.jsx              # Router shell
+│   │   ├── pages/               # Home, Detect, Chat, Dashboard, History...
+│   │   ├── components/          # Navbar, Footer, UI primitives
+│   │   ├── contexts/            # AuthContext
+│   │   └── hooks/               # use-analysis, use-theme, use-voice-input
+│   └── vercel.json              # SPA rewrite rules
 ├── lib/
-│   └── db/                      # Drizzle ORM schema (PostgreSQL)
+│   └── db/                      # Drizzle ORM schema (Pranav)
+│       └── src/
+│           ├── schema/
+│           │   ├── analyses.js  # Forensic analysis table
+│           │   ├── conversations.js
+│           │   ├── messages.js
+│           │   └── index.js
+│           └── index.js         # Database client factory
+├── SatyaCheck_Roles_PDFs/       # Team role documentation
+│   ├── Role_1_Tanush_Frontend_Development.pdf
+│   ├── Role_2_Shivam_Backend_Development.pdf
+│   ├── Role_3_Pranav_Database_Architecture.pdf
+│   └── Role_4_Simran_AI_and_API_Integration.pdf
+├── vercel.json                  # Root Vercel build config
 ├── .env.example                 # Environment variable template
-├── .gitignore                   # Excludes .env, node_modules, data files
+├── .gitignore                   # Excludes .env, node_modules, user data
 └── README.md
 ```
 
