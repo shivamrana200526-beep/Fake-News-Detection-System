@@ -1,24 +1,24 @@
-# 🛡️ SatyaCheck — Role-Based Code & Architecture Breakdown
+﻿# ðŸ›¡ï¸ SatyaCheck â€” Role-Based Code & Architecture Breakdown
 
-Four engineering roles power **SatyaCheck** end-to-end. Every code snippet below is taken directly from the actual production codebase in **100% JavaScript (ES Modules & React JSX)** — with zero TypeScript.
+Four engineering roles power **SatyaCheck** end-to-end. Every code snippet below is taken directly from the actual production codebase in **100% JavaScript (ES Modules & React JSX)** â€” with zero TypeScript.
 
 ---
 
-## 👥 Engineering Team & Role Assignments
+## ðŸ‘¥ Engineering Team & Role Assignments
 
 | Role | Lead Engineer | Domain | Core Tech Stack | Key Files Owned |
 |------|--------------|--------|-----------------|-----------------|
-| 🎨 **Role 1** | **Tanush** | **Frontend Architecture & UI/UX** | React 19 · Vite · Tailwind CSS v4 · wouter · React Query · shadcn/ui · Recharts | `frontend-js/src/App.jsx`, `pages/Detect.jsx`, `pages/Chat.jsx`, `pages/Dashboard.jsx`, `pages/History.jsx`, `hooks/use-analysis.js`, `hooks/use-theme.js`, `hooks/use-voice-input.js` |
-| ⚙️ **Role 2** | **Shivam** | **Backend Development & Server Gateway** | Node.js (ESM) · Express 5 · Pino · CORS · Cheerio · Server-Sent Events · Vercel Serverless | `artifacts/api-server/src/app.js`, `src/index.js`, `routes/index.js`, `routes/analyze.js`, `routes/chat.js`, `routes/auth.js`, `routes/health.js`, `lib/scraper.js`, `api/index.js` |
-| 🗄️ **Role 3** | **Pranav** | **Database Architecture & Persistence** | PostgreSQL · Drizzle ORM · Zod · Dual-Mode JSON Storage Engine | `lib/db/src/schema/analyses.js`, `schema/conversations.js`, `schema/messages.js`, `schema/index.js`, `lib/db/src/index.js`, `lib/db/drizzle.config.js`, `analyses-storage.json` |
-| 🤖 **Role 4** | **Simran** | **AI & API Integration (Forensic Intelligence)** | Multi-Tier AI (Ollama + Zero-Key Cloud + Offline Heuristics) · NLP · Intent Guardrails | `artifacts/api-server/src/lib/ai-service.js`, `routes/chat.js` (AI & guardrails), `routes/analyze.js` (prompts), `routes/quiz.js`, `routes/trending.js`, `routes/credibility.js` |
+| ðŸŽ¨ **Role 1** | **Tanush** | **Frontend Architecture & UI/UX** | React 19 Â· Vite Â· Tailwind CSS v4 Â· wouter Â· React Query Â· shadcn/ui Â· Recharts | `frontend-js/src/App.jsx`, `pages/Detect.jsx`, `pages/Chat.jsx`, `pages/Dashboard.jsx`, `pages/History.jsx`, `hooks/use-analysis.js`, `hooks/use-theme.js`, `hooks/use-voice-input.js` |
+| âš™ï¸ **Role 2** | **Shivam** | **Backend Development & Server Gateway** | Node.js (ESM) Â· Express 5 Â· Pino Â· CORS Â· Cheerio Â· Server-Sent Events Â· Vercel Serverless | `artifacts/api-server/src/app.js`, `src/index.js`, `routes/index.js`, `routes/analyze.js`, `routes/chat.js`, `routes/auth.js`, `routes/health.js`, `lib/scraper.js`, `api/index.js` |
+| ðŸ—„ï¸ **Role 3** | **Pranav** | **Database Architecture & Persistence** | PostgreSQL Â· Drizzle ORM Â· Zod Â· Dual-Mode JSON Storage Engine | `lib/db/src/schema/analyses.js`, `schema/conversations.js`, `schema/messages.js`, `schema/index.js`, `lib/db/src/index.js`, `lib/db/drizzle.config.js`, `analyses-storage.json` |
+| ðŸ¤– **Role 4** | **Simar** | **AI & API Integration (Forensic Intelligence)** | Multi-Tier AI (Ollama + Zero-Key Cloud + Offline Heuristics) Â· NLP Â· Intent Guardrails | `artifacts/api-server/src/lib/ai-service.js`, `routes/chat.js` (AI & guardrails), `routes/analyze.js` (prompts), `routes/quiz.js`, `routes/trending.js`, `routes/credibility.js` |
 
 ---
 
-## 1. 🎨 Role 1: Frontend Development — Tanush
+## 1. ðŸŽ¨ Role 1: Frontend Development â€” Tanush
 
 * **Lead Engineer:** Tanush
-* **Stack:** React 19 · Vite 7 · Tailwind CSS v4 · JavaScript (JSX) · wouter · TanStack React Query · Radix UI · Recharts · Framer Motion
+* **Stack:** React 19 Â· Vite 7 Â· Tailwind CSS v4 Â· JavaScript (JSX) Â· wouter Â· TanStack React Query Â· Radix UI Â· Recharts Â· Framer Motion
 * **Base Directory:** `frontend-js/src/`
 
 ### Responsibilities
@@ -30,7 +30,7 @@ Four engineering roles power **SatyaCheck** end-to-end. Every code snippet below
 
 ---
 
-### 📄 `frontend-js/src/App.jsx` — Application Shell & Router
+### ðŸ“„ `frontend-js/src/App.jsx` â€” Application Shell & Router
 **Author:** Tanush
 
 ```jsx
@@ -93,7 +93,7 @@ export default function App() {
 
 ---
 
-### 📄 `frontend-js/src/hooks/use-analysis.js` — React Query API Integration
+### ðŸ“„ `frontend-js/src/hooks/use-analysis.js` â€” React Query API Integration
 **Author:** Tanush
 
 ```js
@@ -142,7 +142,7 @@ export function useStats(options) {
 
 ---
 
-### 📄 `frontend-js/src/pages/History.jsx` — Browser-Local History & CSV Export
+### ðŸ“„ `frontend-js/src/pages/History.jsx` â€” Browser-Local History & CSV Export
 **Author:** Tanush
 
 ```jsx
@@ -199,7 +199,7 @@ export default function History() {
 
 ---
 
-### 📄 `frontend-js/src/hooks/use-voice-input.js` — Hands-Free Web Speech Recognition
+### ðŸ“„ `frontend-js/src/hooks/use-voice-input.js` â€” Hands-Free Web Speech Recognition
 **Author:** Tanush
 
 ```js
@@ -239,10 +239,10 @@ export function useVoiceInput({ onResult, onError } = {}) {
 
 ---
 
-## 2. ⚙️ Role 2: Backend Development — Shivam
+## 2. âš™ï¸ Role 2: Backend Development â€” Shivam
 
 * **Lead Engineer:** Shivam
-* **Stack:** Node.js (ESM) · Express 5 · Pino HTTP · Cheerio (Scraping) · CORS · Server-Sent Events (SSE) · Vercel Serverless
+* **Stack:** Node.js (ESM) Â· Express 5 Â· Pino HTTP Â· Cheerio (Scraping) Â· CORS Â· Server-Sent Events (SSE) Â· Vercel Serverless
 * **Base Directory:** `artifacts/api-server/src/` & `api/`
 
 ### Responsibilities
@@ -255,7 +255,7 @@ export function useVoiceInput({ onResult, onError } = {}) {
 
 ---
 
-### 📄 `artifacts/api-server/src/app.js` — Express Server Architecture
+### ðŸ“„ `artifacts/api-server/src/app.js` â€” Express Server Architecture
 **Author:** Shivam
 
 ```js
@@ -270,14 +270,14 @@ const app = express();
 // Structured JSON logging
 app.use(pinoHttp({ logger }));
 
-// CORS — allows cross-origin requests from frontend dev and production origins
+// CORS â€” allows cross-origin requests from frontend dev and production origins
 app.use(cors());
 
 // Parse JSON bodies up to 50MB (handles base64 image uploads)
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
-// Route dispatch — mount all endpoints under /api
+// Route dispatch â€” mount all endpoints under /api
 app.use("/api", router);
 
 export default app;
@@ -285,7 +285,7 @@ export default app;
 
 ---
 
-### 📄 `artifacts/api-server/src/routes/index.js` — Master Route Registry
+### ðŸ“„ `artifacts/api-server/src/routes/index.js` â€” Master Route Registry
 **Author:** Shivam
 
 ```js
@@ -313,7 +313,7 @@ export default router;
 
 ---
 
-### 📄 `artifacts/api-server/src/lib/scraper.js` — Web Article Extraction
+### ðŸ“„ `artifacts/api-server/src/lib/scraper.js` â€” Web Article Extraction
 **Author:** Shivam
 
 ```js
@@ -363,7 +363,7 @@ export async function scrapeUrl(url) {
 
 ---
 
-### 📄 `api/index.js` — Vercel Serverless Gateway
+### ðŸ“„ `api/index.js` â€” Vercel Serverless Gateway
 **Author:** Shivam
 
 ```js
@@ -375,10 +375,10 @@ export default app;
 
 ---
 
-## 3. 🗄️ Role 3: Database Architecture — Pranav
+## 3. ðŸ—„ï¸ Role 3: Database Architecture â€” Pranav
 
 * **Lead Engineer:** Pranav
-* **Stack:** PostgreSQL · Drizzle ORM · Zod Validation · Dual-Mode File Storage Fallback
+* **Stack:** PostgreSQL Â· Drizzle ORM Â· Zod Validation Â· Dual-Mode File Storage Fallback
 * **Base Directory:** `lib/db/src/` & root storage files
 
 ### Responsibilities
@@ -389,20 +389,20 @@ export default app;
 
 ---
 
-### 📄 `lib/db/src/schema/analyses.js` — Analysis Tables & Schema
+### ðŸ“„ `lib/db/src/schema/analyses.js` â€” Analysis Tables & Schema
 **Author:** Pranav
 
 ```js
 import { pgTable, text, serial, integer, timestamp, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 
-// Primary table — one row per fact-check request
+// Primary table â€” one row per fact-check request
 export const analyses = pgTable("analyses", {
   id:                 serial("id").primaryKey(),
   content:            text("content").notNull(),              // submitted text / URL / "[Image Upload]"
   sourceType:         text("source_type").notNull(),          // "text" | "url" | "headline" | "image"
   prediction:         text("prediction").notNull(),           // "Real" | "Fake" | "Misleading"
-  confidence:         integer("confidence").notNull(),        // 0–100 integer score
+  confidence:         integer("confidence").notNull(),        // 0â€“100 integer score
   explanation:        text("explanation").notNull(),          // 3-4 sentence comprehensive verdict
   keywords:           text("keywords").array(),               // extracted topic tags
   detectedSource:     jsonb("detected_source"),              // { name, url }
@@ -412,7 +412,7 @@ export const analyses = pgTable("analyses", {
   createdAt:          timestamp("created_at").defaultNow(),
 });
 
-// Secondary table — linked verified external references
+// Secondary table â€” linked verified external references
 export const analysisResults = pgTable("analysis_results", {
   id:                 serial("id").primaryKey(),
   analysisId:         integer("analysis_id").notNull(),
@@ -428,7 +428,7 @@ export const insertAnalysisSchema = createInsertSchema(analyses).omit({
 
 ---
 
-### 📄 `lib/db/src/schema/conversations.js` & `messages.js` — Chat Tables
+### ðŸ“„ `lib/db/src/schema/conversations.js` & `messages.js` â€” Chat Tables
 **Author:** Pranav
 
 ```js
@@ -455,7 +455,7 @@ export const messages = pgTable("messages", {
 
 ---
 
-### 📄 Analytical SQL Queries Suite
+### ðŸ“„ Analytical SQL Queries Suite
 **Author:** Pranav
 
 ```js
@@ -485,10 +485,10 @@ export async function getRecentAnalyses(db) {
 
 ---
 
-## 4. 🤖 Role 4: AI & API Integration — Simran
+## 4. ðŸ¤– Role 4: AI & API Integration â€” Simar
 
-* **Lead Engineer:** Simran
-* **Stack:** Multi-Tier AI Cascade · Local Ollama (LLaMA 3.2 / LLaVA) · Zero-API-Key Cloud Endpoint · Heuristic Forensic Engine · Intent Guardrails · NLP Claim Parser
+* **Lead Engineer:** Simar
+* **Stack:** Multi-Tier AI Cascade Â· Local Ollama (LLaMA 3.2 / LLaVA) Â· Zero-API-Key Cloud Endpoint Â· Heuristic Forensic Engine Â· Intent Guardrails Â· NLP Claim Parser
 * **Base Directory:** `artifacts/api-server/src/lib/ai-service.js` & `routes/`
 
 ### Responsibilities
@@ -500,11 +500,11 @@ export async function getRecentAnalyses(db) {
 
 ---
 
-### 📄 `artifacts/api-server/src/lib/ai-service.js` — Multi-Tier AI Engine
-**Author:** Simran
+### ðŸ“„ `artifacts/api-server/src/lib/ai-service.js` â€” Multi-Tier AI Engine
+**Author:** Simar
 
 ```js
-// Author: Simran (AI Lead)
+// Author: Simar (AI Lead)
 // File: artifacts/api-server/src/lib/ai-service.js
 
 export async function queryAI(messages, options = {}) {
@@ -565,11 +565,11 @@ export async function queryAI(messages, options = {}) {
 
 ---
 
-### 📄 `artifacts/api-server/src/routes/chat.js` — Intelligent Intent Guardrail
-**Author:** Simran
+### ðŸ“„ `artifacts/api-server/src/routes/chat.js` â€” Intelligent Intent Guardrail
+**Author:** Simar
 
 ```js
-// Author: Simran (AI Lead)
+// Author: Simar (AI Lead)
 // File: artifacts/api-server/src/routes/chat.js
 
 export function isRecipeOrOffTopic(msg) {
@@ -598,11 +598,11 @@ export function isRecipeOrOffTopic(msg) {
 
 ---
 
-### 📄 `artifacts/api-server/src/routes/analyze.js` — 10-Dimensional Forensic Prompt
-**Author:** Simran
+### ðŸ“„ `artifacts/api-server/src/routes/analyze.js` â€” 10-Dimensional Forensic Prompt
+**Author:** Simar
 
 ```js
-// Author: Simran (AI Lead)
+// Author: Simar (AI Lead)
 // File: artifacts/api-server/src/routes/analyze.js
 
 export const FORENSIC_SYSTEM_PROMPT = `You are a senior forensic fact-checker with expertise in
@@ -631,11 +631,11 @@ Analyze news content across 10 dimensions and return ONLY valid JSON:
 
 ---
 
-### 📄 Automated Multi-Claim NLP Extraction
-**Author:** Simran
+### ðŸ“„ Automated Multi-Claim NLP Extraction
+**Author:** Simar
 
 ```js
-// Author: Simran (AI Lead)
+// Author: Simar (AI Lead)
 // Parses long paragraphs into discrete verifiable claims
 export async function extractClaims(text) {
   const prompt = [
@@ -659,31 +659,32 @@ Return ONLY a valid JSON array of strings: ["claim1", "claim2", ...]. Do not inc
 
 ---
 
-## 🔗 Architecture & Request Lifecycle
+## ðŸ”— Architecture & Request Lifecycle
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                 ROLE 1: FRONTEND (Tanush)                   │
-│  React 19 SPA • Vite • Tailwind v4 • wouter                 │
-│  useAnalyzeContent() → fetch("POST /api/analyze", data)     │
-│  useVoiceInput()     → Web Speech API transcription         │
-│  localStorage        → saveToHistory() for offline privacy  │
-└───────────────────────┬─────────────────────────────────────┘
-                        │ HTTP / SSE
-┌───────────────────────▼─────────────────────────────────────┐
-│                 ROLE 2: BACKEND (Shivam)                    │
-│  Node.js (ESM) • Express 5 • Pino Logging • Vercel Gateway  │
-│  POST /api/analyze  → scrapeUrl() + AI orchestration        │
-│  POST /api/chat     → SSE streaming token delivery          │
-│  POST /api/auth     → crypto token session security         │
-└──────┬────────────────────────────────────────┬─────────────┘
-       │ Drizzle ORM / JSON Storage             │ Async Inference
-┌──────▼──────────────────────────┐     ┌───────▼─────────────────────┐
-│    ROLE 3: DATABASE (Pranav)    │     │   ROLE 4: AI/API (Simran)   │
-│  PostgreSQL + Drizzle ORM       │     │  Tier 1: Ollama (LLaMA/LLaVA│
-│  Table: analyses                │     │  Tier 2: Pollinations AI    │
-│  Table: conversations, messages │     │  Tier 3: Heuristic Engine   │
-│  Fallback: analyses-storage.json│     │  Guardrail: Recipe Filter   │
-│  Validation: drizzle-zod        │     │  Schema: 10-Dim Forensic    │
-└─────────────────────────────────┘     └─────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                 ROLE 1: FRONTEND (Tanush)                   â”‚
+â”‚  React 19 SPA â€¢ Vite â€¢ Tailwind v4 â€¢ wouter                 â”‚
+â”‚  useAnalyzeContent() â†’ fetch("POST /api/analyze", data)     â”‚
+â”‚  useVoiceInput()     â†’ Web Speech API transcription         â”‚
+â”‚  localStorage        â†’ saveToHistory() for offline privacy  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                        â”‚ HTTP / SSE
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                 ROLE 2: BACKEND (Shivam)                    â”‚
+â”‚  Node.js (ESM) â€¢ Express 5 â€¢ Pino Logging â€¢ Vercel Gateway  â”‚
+â”‚  POST /api/analyze  â†’ scrapeUrl() + AI orchestration        â”‚
+â”‚  POST /api/chat     â†’ SSE streaming token delivery          â”‚
+â”‚  POST /api/auth     â†’ crypto token session security         â”‚
+â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+       â”‚ Drizzle ORM / JSON Storage             â”‚ Async Inference
+â”Œâ”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚    ROLE 3: DATABASE (Pranav)    â”‚     â”‚   ROLE 4: AI/API (Simar)   â”‚
+â”‚  PostgreSQL + Drizzle ORM       â”‚     â”‚  Tier 1: Ollama (LLaMA/LLaVAâ”‚
+â”‚  Table: analyses                â”‚     â”‚  Tier 2: Pollinations AI    â”‚
+â”‚  Table: conversations, messages â”‚     â”‚  Tier 3: Heuristic Engine   â”‚
+â”‚  Fallback: analyses-storage.jsonâ”‚     â”‚  Guardrail: Recipe Filter   â”‚
+â”‚  Validation: drizzle-zod        â”‚     â”‚  Schema: 10-Dim Forensic    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
+
