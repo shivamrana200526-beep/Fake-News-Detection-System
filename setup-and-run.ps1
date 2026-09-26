@@ -71,6 +71,14 @@ if (-not (Test-Path (Join-Path $ROOT "node_modules"))) {
     }
 }
 Write-Host "  Dependencies verified." -ForegroundColor Green
+$frontendDir = Join-Path $ROOT "frontend-js"
+if (Test-Path $frontendDir) {
+    if (-not (Test-Path (Join-Path $frontendDir "node_modules"))) {
+        Write-Host "  Installing frontend dependencies (npm install in frontend-js)..." -ForegroundColor Gray
+        Start-Process -FilePath "cmd.exe" -ArgumentList "/c npm install" -WorkingDirectory $frontendDir -Wait
+        Write-Host "  Frontend dependencies installed." -ForegroundColor Green
+    }
+}
 
 # ─── STEP 5: Start Backend & Frontend ────────────────────────────────────────
 Write-Host "[5/5] Launching SatyaCheck..." -ForegroundColor Yellow

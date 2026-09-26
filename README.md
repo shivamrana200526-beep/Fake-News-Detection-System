@@ -149,78 +149,90 @@ Fake-News-Defense/
 
 ---
 
-## 🚀 Getting Started
+## 🚀 How to Run the Project
 
 ### Prerequisites
 
-| Requirement | Version | Install |
-|-------------|---------|---------|
-| **Node.js** | 20+ | [nodejs.org](https://nodejs.org/) |
-| **pnpm** | 8+ | `npm install -g pnpm` |
-| **Ollama** | Latest | [ollama.com/download](https://ollama.com/download) *(optional — app works without it)* |
+| Requirement | Version | Install Link | Required? |
+|-------------|---------|--------------|-----------|
+| **Node.js** | 20+ | [nodejs.org](https://nodejs.org/) | **Yes** |
+| **pnpm** or **npm** | 8+ | Built into Node / `npm install -g pnpm` | **Yes** |
+| **Ollama** | Latest | [ollama.com/download](https://ollama.com/download) | *Optional* (app automatically falls back to free cloud AI + offline heuristics if absent) |
 
-### 1. Clone the Repository
+---
 
+### Option A: ⚡ One-Command Automatic Run (Windows)
+
+We provide an automated launcher script that checks Node.js, starts Ollama (if available), generates `.env`, installs all dependencies, and boots both frontend and backend concurrently:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File setup-and-run.ps1
+```
+
+Once launched, open **[http://localhost:5173](http://localhost:5173)** in your browser!
+
+---
+
+### Option B: 🛠️ Step-by-Step Manual Run (Any OS — Windows / macOS / Linux)
+
+Follow these simple steps:
+
+#### Step 1: Clone the Repository
 ```bash
 git clone https://github.com/shivamrana200526-beep/Fake-News-Detection-System.git
 cd Fake-News-Detection-System
 ```
 
-### 2. Set Up Environment Variables
-
+#### Step 2: Configure Environment
+Copy `.env.example` to `.env` (the pre-filled defaults work immediately out-of-the-box):
 ```bash
+# On Windows PowerShell:
+Copy-Item .env.example .env
+
+# On Linux/macOS or Git Bash:
 cp .env.example .env
 ```
 
-The defaults in `.env.example` work out of the box — no changes needed for local development.
-
-> ⚠️ **Never commit `.env` to Git.** It is listed in `.gitignore`.
-
-### 3. Install Dependencies
-
+#### Step 3: Install Dependencies
+Install dependencies for both root workspace and the React frontend:
 ```bash
-# Install all workspace packages from the root
+# 1. Install root workspace packages (Backend, ORM, logging)
 pnpm install
+# (Or if you don't have pnpm: npm install)
 
-# Install frontend dependencies separately (uses npm)
-cd frontend-js && npm install && cd ..
+# 2. Install frontend packages
+cd frontend-js
+npm install
+cd ..
 ```
 
-### 4. Download the AI Model (Optional — for best results)
-
+#### Step 4: Download AI Model *(Optional)*
+If you want 100% private local AI processing via Ollama:
 ```bash
-# One-time download (~700 MB)
 ollama pull llama3.2:1b
 ```
+*(If you skip this step, SatyaCheck automatically routes requests to its free zero-config cloud AI, then to built-in rule heuristics.)*
 
-> If Ollama is not running, the app automatically falls back to the free `pollinations.ai` cloud AI, then to the built-in heuristic engine. Nothing breaks.
+#### Step 5: Start the Servers
 
-### 5. Start the Application
+You will need **two terminal tabs** open in the project root:
 
-**Terminal 1 — AI Model (optional):**
-```bash
-ollama serve
-```
+* **Terminal 1: Start Backend API Server**
+  ```bash
+  npm run dev:backend
+  ```
+  *(Or directly: `node --env-file=.env artifacts/api-server/src/index.js`)*
+  > Backend will be active on **http://localhost:3000** (Health check: `http://localhost:3000/api/healthz`)
 
-**Terminal 2 — Backend API:**
-```bash
-# From the project root
-node --env-file=".env" artifacts/api-server/src/index.js
-```
+* **Terminal 2: Start Frontend Application**
+  ```bash
+  npm run dev:frontend
+  ```
+  *(Or directly: `cd frontend-js && npm run dev`)*
+  > Frontend will be running on **http://localhost:5173**
 
-**Terminal 3 — Frontend:**
-```bash
-cd frontend-js
-npm run dev
-```
-
-### 6. Open the App
-
-| Service | URL |
-|---------|-----|
-| Frontend | [http://localhost:5173](http://localhost:5173) |
-| Backend API | [http://localhost:3000](http://localhost:3000) |
-| Health Check | [http://localhost:3000/api/healthz](http://localhost:3000/api/healthz) |
+#### Step 6: Open the Application
+Navigate to **[http://localhost:5173](http://localhost:5173)** in any browser. Log in or create an account, and start fact-checking!
 
 ---
 
