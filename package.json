@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "concurrently -n \"backend,frontend\" -c \"green,blue\" \"npm run dev:backend\" \"npm run dev:frontend\",
+    "dev": "concurrently -n \"backend,frontend\" -c \"green,blue\" \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:backend": "node --env-file=.env artifacts/api-server/src/index.js",
     "dev:frontend": "cd frontend-js && npm run dev",
     "start": "node --env-file=.env artifacts/api-server/src/index.js",
