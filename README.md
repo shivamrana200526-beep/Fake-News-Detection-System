@@ -15,25 +15,6 @@ SatyaCheck is a full-stack web application that detects whether a news article, 
 
 ---
 
-## 👥 Team & Roles
-
-This project is built by a team of 4 engineers, each owning a specific domain.
-
-| Role | Lead Engineer | Key Files Owned |
-|------|--------------|-----------------|
-| 🎨 **Role 1 — Frontend** | **Tanush** | `frontend-js/src/App.jsx` · all `pages/` · `components/layout/` · `hooks/` · `contexts/AuthContext.jsx` |
-| ⚙️ **Role 2 — Backend** | **Shivam** | `artifacts/api-server/src/app.js` · `index.js` · `routes/auth.js` · `routes/health.js` · `lib/scraper.js` · `lib/logger.js` · `api/index.js` |
-| 🗄️ **Role 3 — Database** | **Pranav** | `lib/db/src/schema/analyses.js` · `conversations.js` · `messages.js` · `lib/db/src/index.js` |
-| 🤖 **Role 4 — AI & API** | **Simar** | `lib/ai-service.js` · `routes/analyze.js` · `routes/chat.js` · `routes/quiz.js` · `routes/trending.js` · `routes/credibility.js` |
-
-### 📂 How to find your files
-
-**On GitHub** → browse the repository folder structure below.
-
-**After cloning** → open the folder matching your role from the project structure section.
-
----
-
 ## ✨ Features
 
 | Feature | Description |
@@ -76,44 +57,43 @@ This project is built by a team of 4 engineers, each owning a specific domain.
 |-----------|---------|
 | **PostgreSQL** | Relational database (optional — app falls back to JSON files if not configured) |
 | **Drizzle ORM** | Type-safe query builder and schema manager |
-| **drizzle-zod** | Auto-generates Zod insert validators from schema |
 
 ### AI Layer
 | Tier | Provider | Notes |
 |------|----------|-------|
 | Tier 1 | **Ollama** (local) | `llama3.2:1b` — runs on your machine, 4s timeout |
 | Tier 2 | **pollinations.ai** (free cloud) | Zero API key required, works on Vercel |
-| Tier 3 | **Built-in heuristics** | 9 verified fact patterns, pure JS, offline |
+| Tier 3 | **Built-in heuristics** | Verified fact patterns, pure JS, offline |
 
 ---
 
 ## 📁 Project Structure
 
 ```
-Fake-News-Defense/
+Fake-News-Detection-System/
 ├── artifacts/
-│   └── api-server/              # Express REST API (Shivam)
+│   └── api-server/              # Express REST API
 │       ├── package.json
 │       └── src/
-│           ├── index.js         # Server entry point, PORT validation
+│           ├── index.js         # Server entry point
 │           ├── app.js           # Express app, CORS, static serving
 │           ├── lib/
-│           │   ├── ai-service.js  # 3-tier AI engine (Simar)
-│           │   ├── scraper.js     # URL HTML scraper (Shivam)
-│           │   └── logger.js      # Application logger (Shivam)
+│           │   ├── ai-service.js  # 3-tier AI engine
+│           │   ├── scraper.js     # URL article scraper
+│           │   └── logger.js      # Application logger
 │           └── routes/
-│               ├── index.js       # Route registry (Shivam)
-│               ├── auth.js        # /api/auth/* — register, login, google (Shivam)
-│               ├── users.js       # /api/users — session-protected admin log (Shivam)
-│               ├── health.js      # /api/healthz (Shivam)
-│               ├── analyze.js     # /api/analyze — AI fact-check (Simar)
-│               ├── chat.js        # /api/chat — SSE streaming chat (Simar)
-│               ├── credibility.js # /api/credibility (Simar)
-│               ├── trending.js    # /api/trending (Simar)
-│               └── quiz.js        # /api/quiz (Simar)
+│               ├── index.js       # Route registry
+│               ├── auth.js        # /api/auth/* — register, login, google
+│               ├── users.js       # /api/users
+│               ├── health.js      # /api/healthz
+│               ├── analyze.js     # /api/analyze — AI fact-check
+│               ├── chat.js        # /api/chat — SSE streaming chat
+│               ├── credibility.js # /api/credibility
+│               ├── trending.js    # /api/trending
+│               └── quiz.js        # /api/quiz
 ├── api/
 │   └── index.js                 # Vercel serverless adapter
-├── frontend-js/                 # React 19 + Vite frontend (Tanush)
+├── frontend-js/                 # React 19 + Vite frontend
 │   ├── src/
 │   │   ├── App.jsx              # Router, ProtectedRoute, AnimatePresence
 │   │   ├── main.jsx             # React DOM entry point
@@ -133,7 +113,7 @@ Fake-News-Defense/
 │   ├── vite.config.js
 │   └── vercel.json              # SPA rewrite rules
 ├── lib/
-│   └── db/                      # Drizzle ORM database layer (Pranav)
+│   └── db/                      # Drizzle ORM database layer
 │       └── src/
 │           ├── schema/
 │           │   ├── analyses.js  # analyses + analysisResults tables
@@ -157,7 +137,7 @@ Fake-News-Defense/
 |-------------|---------|--------------|-----------|
 | **Node.js** | 20+ | [nodejs.org](https://nodejs.org/) | **Yes** |
 | **pnpm** or **npm** | 8+ | Built into Node / `npm install -g pnpm` | **Yes** |
-| **Ollama** | Latest | [ollama.com/download](https://ollama.com/download) | *Optional* (app automatically falls back to free cloud AI + offline heuristics if absent) |
+| **Ollama** | Latest | [ollama.com/download](https://ollama.com/download) | *Optional* (app falls back to free cloud AI + offline heuristics automatically) |
 
 ---
 
@@ -169,13 +149,11 @@ We provide an automated launcher script that checks Node.js, starts Ollama (if a
 powershell -ExecutionPolicy Bypass -File setup-and-run.ps1
 ```
 
-Once launched, open **[http://localhost:5173](http://localhost:5173)** in your browser!
+Once launched, open **[http://localhost:5173](http://localhost:5173)** in your browser.
 
 ---
 
-### Option B: 🛠️ Step-by-Step Manual Run (Any OS — Windows / macOS / Linux)
-
-Follow these simple steps:
+### Option B: 🛠️ Step-by-Step Manual Run (Windows / macOS / Linux)
 
 #### Step 1: Clone the Repository
 ```bash
@@ -184,7 +162,7 @@ cd Fake-News-Detection-System
 ```
 
 #### Step 2: Configure Environment
-Copy `.env.example` to `.env` (the pre-filled defaults work immediately out-of-the-box):
+Copy `.env.example` to `.env` (the pre-filled defaults work out-of-the-box):
 ```bash
 # On Windows PowerShell:
 Copy-Item .env.example .env
@@ -194,45 +172,45 @@ cp .env.example .env
 ```
 
 #### Step 3: Install Dependencies
-Install dependencies for both root workspace and the React frontend:
 ```bash
-# 1. Install root workspace packages (Backend, ORM, logging)
+# Install root workspace packages (Backend, ORM)
 pnpm install
-# (Or if you don't have pnpm: npm install)
+# Or if you don't have pnpm: npm install
 
-# 2. Install frontend packages
+# Install frontend packages
 cd frontend-js
 npm install
 cd ..
 ```
 
 #### Step 4: Download AI Model *(Optional)*
-If you want 100% private local AI processing via Ollama:
+If you want fully local, private AI processing via Ollama:
 ```bash
 ollama pull llama3.2:1b
 ```
-*(If you skip this step, SatyaCheck automatically routes requests to its free zero-config cloud AI, then to built-in rule heuristics.)*
+If you skip this step, SatyaCheck automatically routes to its free zero-config cloud AI, then to built-in heuristics.
 
 #### Step 5: Start the Servers
 
-You will need **two terminal tabs** open in the project root:
+**Terminal 1 — Backend API:**
+```bash
+npm run dev:backend
+```
+Backend runs on **http://localhost:3000** (health check: `http://localhost:3000/api/healthz`)
 
-* **Terminal 1: Start Backend API Server**
-  ```bash
-  npm run dev:backend
-  ```
-  *(Or directly: `node --env-file=.env artifacts/api-server/src/index.js`)*
-  > Backend will be active on **http://localhost:3000** (Health check: `http://localhost:3000/api/healthz`)
+**Terminal 2 — Frontend:**
+```bash
+npm run dev:frontend
+```
+Frontend runs on **http://localhost:5173**
 
-* **Terminal 2: Start Frontend Application**
-  ```bash
-  npm run dev:frontend
-  ```
-  *(Or directly: `cd frontend-js && npm run dev`)*
-  > Frontend will be running on **http://localhost:5173**
+**Or start both at once:**
+```bash
+npm run dev
+```
 
 #### Step 6: Open the Application
-Navigate to **[http://localhost:5173](http://localhost:5173)** in any browser. Log in or create an account, and start fact-checking!
+Navigate to **[http://localhost:5173](http://localhost:5173)** in any browser.
 
 ---
 
@@ -275,7 +253,7 @@ curl -X POST http://localhost:3000/api/analyze \
   "prediction": "Fake",
   "confidence": 100,
   "explanation": "Bleach is a toxic chemical. Ingesting it is life-threatening and does not cure any disease.",
-  "keywords": ["verified-fact", "historical-record"],
+  "keywords": ["health", "misinformation"],
   "manipulationScore": 85
 }
 ```
@@ -304,7 +282,7 @@ Create a `.env` file in the project root (copy from `.env.example`).
 - `passwordHash` and `token` fields are **stripped from all API responses** via `sanitizeUser()`
 - `GET /api/users` requires a valid Bearer session token — not publicly accessible
 - `.env`, `users-storage.json`, `analyses-storage.json` are excluded from Git via `.gitignore`
-- Forgot-password always returns success — prevents email enumeration
+- Forgot-password endpoint always returns success to prevent email enumeration
 
 ---
 
@@ -351,16 +329,3 @@ DATABASE_URL=<your-postgresql-connection-string>
 ## 📄 License
 
 MIT License — see [LICENSE](LICENSE).
-
----
-
-## 👨‍💻 Authors
-
-| Name | Role | GitHub |
-|------|------|--------|
-| **Shivam** | Backend Development | [@shivamrana200526-beep](https://github.com/shivamrana200526-beep) |
-| **Tanush** | Frontend Development | — |
-| **Pranav** | Database Architecture | — |
-| **Simar** | AI & API Integration | — |
-
-> Built as a college project. SatyaCheck uses no external paid APIs — all AI runs locally via Ollama or the free pollinations.ai fallback.
