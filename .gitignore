@@ -40,6 +40,7 @@ Thumbs.db
 # ─── Large binary / archive files (no value in Git) ──────────
 *.zip
 *.pdf
+!SatyaCheck_Roles_PDFs/*.pdf
 attached_assets/
 SatyaCheck-Backend-Engineering-Guide.pdf
 SatyaCheck-Frontend-Code.zip

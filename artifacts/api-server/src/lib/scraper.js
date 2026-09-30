@@ -1,8 +1,3 @@
-/**
- * URL article content scraper in pure JavaScript.
- * Fetches a URL and extracts the plain text content for analysis.
- */
-
 function extractDomain(url) {
   try {
     return new URL(url).hostname.replace(/^www\./, "");
@@ -16,62 +11,23 @@ function stripHtml(html) {
     .replace(/<script[\s\S]*?<\/script>/gi, " ")
     .replace(/<style[\s\S]*?<\/style>/gi, " ")
     .replace(/<noscript[\s\S]*?<\/noscript>/gi, " ")
-    .replace(/<nav[\s\S]*?<\/nav>/gi, " ")
-    .replace(/<header[\s\S]*?<\/header>/gi, " ")
-    .replace(/<footer[\s\S]*?<\/footer>/gi, " ")
-    .replace(/<aside[\s\S]*?<\/aside>/gi, " ")
-    .replace(/<\/?(p|br|div|h[1-6]|li|blockquote)[^>]*>/gi, "\n")
     .replace(/<[^>]+>/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#039;/g, "'")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&mdash;/g, "—")
-    .replace(/&ndash;/g, "–")
-    .replace(/\s{3,}/g, "\n\n")
+    .replace(/\s+/g, " ")
     .trim();
 }
 
 function extractMeta(html, property) {
-  const patterns = [
-    new RegExp(`<meta[^>]+property=["']${property}["'][^>]+content=["']([^"']+)["']`, "i"),
-    new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+property=["']${property}["']`, "i"),
-    new RegExp(`<meta[^>]+name=["']${property}["'][^>]+content=["']([^"']+)["']`, "i"),
-    new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+name=["']${property}["']`, "i"),
-  ];
-  for (const pat of patterns) {
-    const m = html.match(pat);
-    if (m?.[1]) return m[1].trim();
-  }
-  return "";
+  const match =
+    html.match(new RegExp(`<meta[^>]+(?:name|property)=["']${property}["'][^>]+content=["']([^"']+)["']`, "i")) ||
+    html.match(new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+(?:name|property)=["']${property}["']`, "i"));
+  return match ? match[1].trim() : "";
 }
 
 function extractTitle(html) {
-  const og = extractMeta(html, "og:title");
-  if (og) return og;
-  const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
-  return titleMatch?.[1]?.trim() || "";
-}
-
-function extractAuthor(html) {
-  return (
-    extractMeta(html, "author") ||
-    extractMeta(html, "article:author") ||
-    html.match(/["']author["'][^"']*["']([^"']{3,80})["']/i)?.[1] ||
-    ""
-  );
-}
-
-function extractPublishDate(html) {
-  return (
-    extractMeta(html, "article:published_time") ||
-    extractMeta(html, "date") ||
-    extractMeta(html, "pubdate") ||
-    html.match(/datetime=["']([^"']{10,25})["']/i)?.[1] ||
-    ""
-  );
+  const ogTitle = extractMeta(html, "og:title");
+  if (ogTitle) return ogTitle;
+  const match = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+  return match ? match[1].trim() : "";
 }
 
 export async function scrapeUrl(url) {
@@ -90,35 +46,24 @@ export async function scrapeUrl(url) {
 
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10_000);
+    const timeout = setTimeout(() => controller.abort(), 8000);
 
-    const response = await fetch(url, {
+    const res = await fetch(url, {
       signal: controller.signal,
       headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; SatyaCheck/1.0; +https://satyacheck.ai)",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
       },
       redirect: "follow",
     });
 
     clearTimeout(timeout);
+    if (!res.ok) return fallback;
 
-    if (!response.ok) return fallback;
-
-    const contentType = response.headers.get("content-type") || "";
-    if (!contentType.includes("text/html")) return fallback;
-
-    const html = await response.text();
-
+    const html = await res.text();
     const title = extractTitle(html);
-    const description = extractMeta(html, "og:description") || extractMeta(html, "description");
-    const author = extractAuthor(html);
-    const publishDate = extractPublishDate(html);
-    const rawText = stripHtml(html);
-
-    const lines = rawText.split("\n").filter((l) => l.trim().length > 40);
-    const text = lines.slice(0, 80).join("\n").substring(0, 6000);
+    const description = extractMeta(html, "description") || extractMeta(html, "og:description");
+    const author = extractMeta(html, "author");
+    const text = stripHtml(html).substring(0, 4000);
     const wordCount = text.split(/\s+/).filter(Boolean).length;
 
     return {
@@ -127,10 +72,10 @@ export async function scrapeUrl(url) {
       title,
       text,
       author,
-      publishDate,
+      publishDate: "",
       description,
       wordCount,
-      scrapedOk: text.length > 100,
+      scrapedOk: text.length > 50,
     };
   } catch {
     return fallback;

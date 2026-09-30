@@ -2,21 +2,19 @@ import OpenAI from "openai";
 
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || "http://127.0.0.1:11434/v1";
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "llama3.2:1b";
-const FREE_AI_URL = "https://text.pollinations.ai/";
+const CLOUD_AI_URL = "https://text.pollinations.ai/";
 
 const ollama = new OpenAI({
   baseURL: OLLAMA_BASE_URL,
   apiKey: "ollama",
-  timeout: 4000, // Quick timeout if Ollama is not running
+  timeout: 3000,
 });
 
-// Helper: Try Ollama first, fallback to Free Zero-Key AI, fallback to Heuristic
 export async function queryAI({ messages, jsonMode = false, systemPrompt = "" }) {
   const fullMessages = systemPrompt
     ? [{ role: "system", content: systemPrompt }, ...messages]
     : messages;
 
-  // 1. Try Local Ollama (fastest if running on device)
   try {
     const response = await ollama.chat.completions.create({
       model: OLLAMA_MODEL,
@@ -33,18 +31,15 @@ export async function queryAI({ messages, jsonMode = false, systemPrompt = "" })
       }
       return text;
     }
-  } catch (ollamaErr) {
-    // Ollama not reachable — seamlessly proceed to Free Cloud AI
-  }
+  } catch (err) {}
 
-  // 2. Try Free Cloud AI (Zero API Key, runs anywhere worldwide on Vercel/Cloud)
   try {
-    const res = await fetch(FREE_AI_URL, {
+    const res = await fetch(CLOUD_AI_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         messages: fullMessages,
-        jsonMode: jsonMode,
+        jsonMode,
         model: "openai",
         seed: 42,
       }),
@@ -58,28 +53,24 @@ export async function queryAI({ messages, jsonMode = false, systemPrompt = "" })
       }
       return text;
     }
-  } catch (freeAiErr) {
-    // Both unavailable — fallback to heuristic
-  }
+  } catch (err) {}
 
   return null;
 }
 
-// Built-in rule-based forensic analyzer (offline fallback if zero internet)
 export function runHeuristicFactCheck(content) {
   const lower = content.toLowerCase();
-  
-  // Known fact database (instant accurate matching for common claims)
+
   const knownClaims = [
-    { pattern: /flat earth|earth is flat/i, verdict: "Fake", confidence: 99, exp: "Overwhelming scientific, satellite, and astronomical evidence proves Earth is an oblate spheroid." },
-    { pattern: /moon landing.*(fake|hoax|staged)/i, verdict: "Fake", confidence: 98, exp: "Apollo moon landings are verified by independent tracking, retroreflectors, and physical moon rock samples." },
-    { pattern: /nasa.*(landed on the moon|apollo 11)/i, verdict: "Real", confidence: 99, exp: "Apollo 11 landed astronauts on the Moon on July 20, 1969." },
-    { pattern: /drinking bleach|drink bleach/i, verdict: "Fake", confidence: 100, exp: "Bleach is a toxic chemical. Ingesting it is life-threatening and does not cure any disease." },
-    { pattern: /raw garlic.*cure.*(infection|covid|cancer)/i, verdict: "Fake", confidence: 95, exp: "While garlic has mild antimicrobial properties, it does not cure serious infections or diseases." },
-    { pattern: /modi.*prime minister/i, verdict: "Real", confidence: 99, exp: "Narendra Modi is the current Prime Minister of India." },
-    { pattern: /india.*capital.*(mumbai|calcutta)/i, verdict: "Fake", confidence: 100, exp: "The capital of India is New Delhi, not Mumbai or Kolkata." },
-    { pattern: /capital of india is new delhi/i, verdict: "Real", confidence: 100, exp: "New Delhi has been the official capital of India since 1911." },
-    { pattern: /win free (iphone|cash|money)|claim your prize/i, verdict: "Fake", confidence: 95, exp: "Standard phishing and deceptive social engineering tactic." }
+    { pattern: /flat earth|earth is flat/i, verdict: "Fake", confidence: 99, exp: "Scientific and satellite evidence proves Earth is an oblate spheroid." },
+    { pattern: /moon landing.*(fake|hoax|staged)/i, verdict: "Fake", confidence: 98, exp: "Apollo moon landings are verified with telemetry and lunar samples." },
+    { pattern: /nasa.*(landed on the moon|apollo 11)/i, verdict: "Real", confidence: 99, exp: "Apollo 11 successfully landed on the moon on July 20, 1969." },
+    { pattern: /drinking bleach|drink bleach/i, verdict: "Fake", confidence: 100, exp: "Bleach is toxic and fatal if consumed. It cures no disease." },
+    { pattern: /raw garlic.*cure.*(infection|covid|cancer)/i, verdict: "Fake", confidence: 95, exp: "Garlic does not cure viral or bacterial infections." },
+    { pattern: /modi.*prime minister/i, verdict: "Real", confidence: 99, exp: "Narendra Modi is the Prime Minister of India." },
+    { pattern: /india.*capital.*(mumbai|calcutta)/i, verdict: "Fake", confidence: 100, exp: "The capital of India is New Delhi." },
+    { pattern: /capital of india is new delhi/i, verdict: "Real", confidence: 100, exp: "New Delhi is the official capital of India." },
+    { pattern: /win free (iphone|cash|money)|claim your prize/i, verdict: "Fake", confidence: 95, exp: "This is a common scam message." }
   ];
 
   for (const item of knownClaims) {
@@ -88,10 +79,10 @@ export function runHeuristicFactCheck(content) {
         prediction: item.verdict,
         confidence: item.confidence,
         explanation: item.exp,
-        keywords: ["verified-fact", "historical-record"],
+        keywords: ["verified-claim"],
         manipulationScore: item.verdict === "Fake" ? 85 : 5,
-        emotionalTactics: item.verdict === "Fake" ? ["Deceptive assertion"] : [],
-        logicalFallacies: item.verdict === "Fake" ? ["False claim"] : [],
+        emotionalTactics: item.verdict === "Fake" ? ["Deceptive claim"] : [],
+        logicalFallacies: item.verdict === "Fake" ? ["False assertion"] : [],
         factBreakdown: [
           { category: "Claim", detail: content.substring(0, 100), status: item.verdict.toLowerCase() }
         ]
@@ -99,23 +90,21 @@ export function runHeuristicFactCheck(content) {
     }
   }
 
-  // Linguistic pattern heuristic
-  const sensationalWords = ["shocking", "miracle", "doctors hate this", "secret government", "exposed", "urgent warning", "they don't want you to know", "100% cure"];
-  const matches = sensationalWords.filter(w => lower.includes(w));
-  const isSensational = matches.length > 0 || (content.match(/!{2,}|\?{2,}/) !== null);
+  const clickbaitWords = ["shocking", "miracle", "doctors hate this", "secret exposed", "urgent warning", "100% cure"];
+  const isClickbait = clickbaitWords.some(w => lower.includes(w)) || /!{2,}|\?{2,}/.test(content);
 
   return {
-    prediction: isSensational ? "Misleading" : "Unverified",
-    confidence: isSensational ? 75 : 60,
-    explanation: isSensational 
-      ? "Content exhibits hallmark signs of sensationalism and clickbait framing without verified official documentation." 
-      : "Claim requires verification against primary news sources and institutional records.",
-    keywords: ["analysis-pending", "fact-check"],
-    manipulationScore: isSensational ? 70 : 30,
-    emotionalTactics: isSensational ? ["Urgency", "Sensational framing"] : [],
-    logicalFallacies: isSensational ? ["Appeal to emotion"] : [],
+    prediction: isClickbait ? "Misleading" : "Unverified",
+    confidence: isClickbait ? 75 : 60,
+    explanation: isClickbait
+      ? "Content uses sensational language without evidence from verified news outlets."
+      : "Claim requires verification against primary news sources.",
+    keywords: ["news-check"],
+    manipulationScore: isClickbait ? 70 : 25,
+    emotionalTactics: isClickbait ? ["Urgency"] : [],
+    logicalFallacies: isClickbait ? ["Appeal to emotion"] : [],
     factBreakdown: [
-      { category: "Verification", detail: "Cross-reference with credible press agencies recommended.", status: "unverified" }
+      { category: "Verification", detail: "Check with credible news agencies.", status: "unverified" }
     ]
   };
 }

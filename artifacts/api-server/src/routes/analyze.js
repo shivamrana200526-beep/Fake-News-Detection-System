@@ -53,15 +53,14 @@ const SYSTEM_PROMPT = `You are a forensic fact-checker. Analyze news/claims and 
   "authorCredibility": "<credible|questionable|unverified>",
   "missingContext": "<brief omitted context if any, or null>"
 }
-Keep factBreakdown to 2-3 items max. Be concise, punchy, and fast.`;
+Keep factBreakdown to 2-3 items max. Be concise and fast.`;
 
 async function runOllamaAnalysis(content, type, imageBase64, articleContext) {
   const isImage = type === "image" && imageBase64;
   const userPrompt = `Content to analyze:
 ${
   articleContext
-    ? `Article from ${content}:
-${articleContext}`
+    ? `Article from ${content}:\n${articleContext}`
     : `${type.toUpperCase()}: "${content.substring(0, 3000)}"`
 }`;
 
@@ -76,8 +75,8 @@ ${articleContext}`
         role: "user",
         content: [
           { type: "text", text: "Analyze this image and extract any claims or manipulation:" },
-          { type: "image_url", image_url: { url: `data:${mimeType};base64,${base64Data}` } }
-        ]
+          { type: "image_url", image_url: { url: `data:${mimeType};base64,${base64Data}` } },
+        ],
       });
     } else {
       messages.push({ role: "user", content: userPrompt });
@@ -96,7 +95,6 @@ ${articleContext}`
     console.error("AI analysis error:", err);
   }
 
-  // Fallback to built-in rule-based forensic analyzer (offline / zero external calls)
   return runHeuristicFactCheck(content);
 }
 
@@ -133,7 +131,7 @@ router.post("/analyze", async (req, res) => {
 
     const prediction = result?.prediction || "Unknown";
     const confidence = Number(result?.confidence || 50);
-    const explanation = result?.explanation || "Analysis complete. Make sure Ollama is running and has the required model.";
+    const explanation = result?.explanation || "Analysis complete.";
     const keywords = Array.isArray(result?.keywords) ? result.keywords : [];
     const detectedSource = result?.detectedSource || (scrapedMeta ? { name: scrapedMeta.domain, url: content } : { name: "Unknown", url: "#" });
     const additionalSources = Array.isArray(result?.additionalSources) ? result.additionalSources : [];
@@ -145,7 +143,10 @@ router.post("/analyze", async (req, res) => {
           confidence: Number(result.confidence || 50),
           reasoning: result.explanation || "",
           factPoints: Array.isArray(result.factBreakdown)
-            ? result.factBreakdown.map((fp) => ({ point: fp.detail, status: fp.status === "real" ? "verified" : fp.status === "fake" ? "false" : fp.status || "unknown" }))
+            ? result.factBreakdown.map((fp) => ({
+                point: fp.detail,
+                status: fp.status === "real" ? "verified" : fp.status === "fake" ? "false" : fp.status || "unknown",
+              }))
             : [],
         }
       : null;
@@ -153,19 +154,22 @@ router.post("/analyze", async (req, res) => {
     let newAnalysis = null;
     try {
       if (db) {
-        const [inserted] = await db.insert(analyses).values({
-          content: isImage ? "[Image Upload]" : content,
-          sourceType: type,
-          prediction,
-          confidence,
-          explanation,
-          keywords,
-          detectedSource,
-          additionalSources,
-          mediaType: type,
-          geminiVerification,
-          factBreakdown,
-        }).returning();
+        const [inserted] = await db
+          .insert(analyses)
+          .values({
+            content: isImage ? "[Image Upload]" : content,
+            sourceType: type,
+            prediction,
+            confidence,
+            explanation,
+            keywords,
+            detectedSource,
+            additionalSources,
+            mediaType: type,
+            geminiVerification,
+            factBreakdown,
+          })
+          .returning();
         newAnalysis = inserted;
 
         await db.insert(analysisResults).values({
@@ -175,7 +179,7 @@ router.post("/analyze", async (req, res) => {
       } else {
         throw new Error("DB not configured");
       }
-    } catch (dbErr) {
+    } catch {
       newAnalysis = {
         id: Date.now(),
         content: isImage ? "[Image Upload]" : content,
@@ -214,8 +218,8 @@ router.post("/analyze", async (req, res) => {
         : null,
     });
   } catch (err) {
-    req.log.error({ err }, "Analysis failed");
-    return res.status(500).json({ message: "Analysis failed. Please ensure Ollama is running locally." });
+    console.error("Analysis error:", err);
+    return res.status(500).json({ message: "Analysis failed. Please try again." });
   }
 });
 
@@ -240,24 +244,14 @@ router.get("/stats", async (req, res) => {
       realCount: Number(real[0]?.count || 0),
       fakeCount: Number(fake[0]?.count || 0),
       misleadingCount: Number(misleading[0]?.count || 0),
-      trendingTopics: trending.rows.map((row) => ({
-        topic: row.topic,
-        count: Number(row.count),
-      })),
+      trendingTopics: trending.rows.map((row) => ({ topic: row.topic, count: Number(row.count) })),
     });
-  } catch (err) {
+  } catch {
     const list = loadLocalAnalyses();
-    const total = list.length;
-    const realCount = list.filter((a) => a.prediction?.toLowerCase() === "real").length;
-    const fakeCount = list.filter((a) => a.prediction?.toLowerCase() === "fake").length;
-    const misleadingCount = list.filter((a) => a.prediction?.toLowerCase() === "misleading").length;
-
     const topicCounts = {};
     for (const item of list) {
       if (Array.isArray(item.keywords)) {
-        for (const k of item.keywords) {
-          topicCounts[k] = (topicCounts[k] || 0) + 1;
-        }
+        for (const k of item.keywords) topicCounts[k] = (topicCounts[k] || 0) + 1;
       }
     }
     const trendingTopics = Object.entries(topicCounts)
@@ -266,10 +260,10 @@ router.get("/stats", async (req, res) => {
       .map(([topic, count]) => ({ topic, count }));
 
     return res.json({
-      total,
-      realCount,
-      fakeCount,
-      misleadingCount,
+      total: list.length,
+      realCount: list.filter((a) => a.prediction?.toLowerCase() === "real").length,
+      fakeCount: list.filter((a) => a.prediction?.toLowerCase() === "fake").length,
+      misleadingCount: list.filter((a) => a.prediction?.toLowerCase() === "misleading").length,
       trendingTopics,
     });
   }
@@ -278,13 +272,9 @@ router.get("/stats", async (req, res) => {
 router.get("/history", async (req, res) => {
   try {
     if (!db) throw new Error("DB not configured");
-    const history = await db
-      .select()
-      .from(analyses)
-      .orderBy(desc(analyses.createdAt))
-      .limit(20);
+    const history = await db.select().from(analyses).orderBy(desc(analyses.createdAt)).limit(20);
     return res.json(history);
-  } catch (err) {
+  } catch {
     return res.json(loadLocalAnalyses().slice(0, 20));
   }
 });

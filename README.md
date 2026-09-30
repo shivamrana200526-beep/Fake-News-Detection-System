@@ -56,7 +56,7 @@ This project is built by a team of 4 engineers, each owning a specific domain.
 |-----------|---------|---------|
 | **Node.js** | 20+ | Runtime — ES Modules (`"type": "module"`) |
 | **Express** | 5 | Web framework & REST API |
-| **Pino** | 9 | Structured JSON logging with secret redaction |
+| **CORS** | 2 | Cross-Origin Resource Sharing |
 | **node:crypto** | built-in | Password hashing (scrypt), token generation |
 | **node:fs** | built-in | File-based JSON storage fallback |
 | **openai** SDK | 7 | OpenAI-compatible client for Ollama local AI |
@@ -96,11 +96,11 @@ Fake-News-Defense/
 │       ├── package.json
 │       └── src/
 │           ├── index.js         # Server entry point, PORT validation
-│           ├── app.js           # Express app, CORS, pino-http, static serving
+│           ├── app.js           # Express app, CORS, static serving
 │           ├── lib/
 │           │   ├── ai-service.js  # 3-tier AI engine (Simar)
 │           │   ├── scraper.js     # URL HTML scraper (Shivam)
-│           │   └── logger.js      # Pino structured logger (Shivam)
+│           │   └── logger.js      # Application logger (Shivam)
 │           └── routes/
 │               ├── index.js       # Route registry (Shivam)
 │               ├── auth.js        # /api/auth/* — register, login, google (Shivam)

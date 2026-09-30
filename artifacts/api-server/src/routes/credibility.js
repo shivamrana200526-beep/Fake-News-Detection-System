@@ -9,7 +9,7 @@ const KNOWN_SOURCES = {
   bbc: { name: "BBC News", credibilityScore: 90, bias: "Center-Left", type: "State Media", summary: "Public service broadcaster operating under Royal Charter with independent editorial supervision.", recentControversies: ["Debates over license fee and regional coverage balance"], transparency: "High" },
   ndtv: { name: "NDTV", credibilityScore: 82, bias: "Center-Left", type: "Mainstream", summary: "Major Indian television news network providing nationwide news and political analysis.", recentControversies: ["Editorial changes following ownership transitions"], transparency: "Medium" },
   thehindu: { name: "The Hindu", credibilityScore: 88, bias: "Center-Left", type: "Mainstream", summary: "Longstanding Indian broadsheet daily known for comprehensive judicial and policy reporting.", recentControversies: ["Editorial opinion page political perspectives"], transparency: "High" },
-  theonion: { name: "The Onion", credibilityScore: 15, bias: "Satire", type: "Satire", summary: "Parody and satirical publication; publishes humorous, fictionalized headlines.", recentControversies: ["Articles frequently mistaken for real news by readers"], transparency: "High" }
+  theonion: { name: "The Onion", credibilityScore: 15, bias: "Satire", type: "Satire", summary: "Parody and satirical publication; publishes humorous, fictionalized headlines.", recentControversies: ["Articles frequently mistaken for real news by readers"], transparency: "High" },
 };
 
 router.post("/credibility", async (req, res) => {
@@ -21,14 +21,12 @@ router.post("/credibility", async (req, res) => {
 
     const cleanSource = source.toLowerCase().replace(/https?:\/\/(www\.)?/, "").replace(/\/.*/, "").trim();
 
-    // Check precomputed source database
     for (const [key, info] of Object.entries(KNOWN_SOURCES)) {
       if (cleanSource.includes(key)) {
         return res.json(info);
       }
     }
 
-    // Dynamic AI credibility analysis
     const aiResult = await queryAI({
       messages: [{
         role: "user",
@@ -42,7 +40,7 @@ Return ONLY valid JSON:
   "summary": "<2 sentence overview>",
   "recentControversies": ["<controversy 1>", "<controversy 2>"],
   "transparency": "High" | "Medium" | "Low"
-}`
+}`,
       }],
       jsonMode: true,
     });
@@ -51,25 +49,24 @@ Return ONLY valid JSON:
       return res.json(aiResult);
     }
 
-    // Default heuristic for unknown domains
     return res.json({
       name: source,
       credibilityScore: 65,
       bias: "Unknown",
       type: "Independent",
-      summary: `Domain evaluation for ${source}. Public editorial history requires direct institutional corroboration.`,
-      recentControversies: ["Limited centralized archive available"],
-      transparency: "Medium"
+      summary: `Domain evaluation for ${source}. No established editorial record found.`,
+      recentControversies: ["No centralized record available"],
+      transparency: "Medium",
     });
-  } catch (err) {
+  } catch {
     return res.json({
       name: req.body?.source || "Source",
       credibilityScore: 50,
       bias: "Unknown",
       type: "Unverified",
-      summary: "Preliminary source check completed. Consult international fact-checking registers (IFCN) for certification.",
+      summary: "Unable to evaluate this source at this time.",
       recentControversies: [],
-      transparency: "Low"
+      transparency: "Low",
     });
   }
 });

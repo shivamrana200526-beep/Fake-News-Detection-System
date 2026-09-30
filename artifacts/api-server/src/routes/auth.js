@@ -23,7 +23,6 @@ function saveUsers(users) {
   }
 }
 
-// Password hashing with scrypt
 function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString("hex");
   const derivedKey = crypto.scryptSync(password, salt, 64);
@@ -42,7 +41,6 @@ function sanitizeUser(user) {
   return safeUser;
 }
 
-// 1. REGISTER NEW USER (EMAIL + PASSWORD)
 router.post("/auth/register", (req, res) => {
   const { name, email, password } = req.body;
 
@@ -94,7 +92,6 @@ router.post("/auth/register", (req, res) => {
   });
 });
 
-// 2. LOGIN (EMAIL + PASSWORD)
 router.post("/auth/login", (req, res) => {
   const { email, password } = req.body;
 
@@ -118,7 +115,6 @@ router.post("/auth/login", (req, res) => {
     return res.status(401).json({ message: "Incorrect password. Please try again." });
   }
 
-  // Update session
   const token = crypto.randomBytes(32).toString("hex");
   user.token = token;
   user.lastLogin = new Date().toISOString();
@@ -133,7 +129,6 @@ router.post("/auth/login", (req, res) => {
   });
 });
 
-// 3. GOOGLE AUTHENTICATION
 router.post("/auth/google", (req, res) => {
   const { email, name, displayName, photoURL, uid } = req.body;
 
@@ -190,7 +185,6 @@ router.post("/auth/google", (req, res) => {
   });
 });
 
-// 4. GET CURRENT USER PROFILE
 router.get("/auth/me", (req, res) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -208,7 +202,6 @@ router.get("/auth/me", (req, res) => {
   return res.json({ user: sanitizeUser(user) });
 });
 
-// 5. FORGOT PASSWORD (SIMULATION & CONFIRMATION)
 router.post("/auth/forgot-password", (req, res) => {
   const { email } = req.body;
   if (!email) {
@@ -216,17 +209,12 @@ router.post("/auth/forgot-password", (req, res) => {
   }
 
   const cleanEmail = email.trim().toLowerCase();
-  const users = loadUsers();
-  const user = users.find((u) => u.email.toLowerCase() === cleanEmail);
-
-  // Always return success for security (prevent email enumeration)
   return res.json({
     success: true,
     message: `If an account exists for ${cleanEmail}, a password reset link has been prepared.`,
   });
 });
 
-// 6. ADMIN USER AUDIT LOG
 router.get("/auth/users", (req, res) => {
   const users = loadUsers();
   return res.json({

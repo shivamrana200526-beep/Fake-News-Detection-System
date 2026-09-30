@@ -22,13 +22,11 @@ function saveUsers(users) {
   }
 }
 
-// Strips sensitive fields before any response
 function sanitizeUser(user) {
   const { passwordHash, token, ...safeUser } = user;
   return safeUser;
 }
 
-// Requires a valid Bearer session token
 function requireAuth(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -42,7 +40,6 @@ function requireAuth(req, res, next) {
   next();
 }
 
-// Called internally after Google sign-in to persist the session entry
 router.post("/users/login", (req, res) => {
   const { uid, email, displayName, photoURL } = req.body;
   if (!email && !uid) {
@@ -78,11 +75,9 @@ router.post("/users/login", (req, res) => {
   }
 
   saveUsers(users);
-  // Never return the raw user record — acknowledge success only
   return res.json({ success: true });
 });
 
-// Admin audit log — requires a valid session token
 router.get("/users", requireAuth, (req, res) => {
   const users = loadUsers();
   return res.json({

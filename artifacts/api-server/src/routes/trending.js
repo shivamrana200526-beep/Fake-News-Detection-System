@@ -14,7 +14,7 @@ const DEFAULT_TRENDING = {
       severity: "High",
       description: "A recurring social media chain message claiming NASA warned of an immediate total telecommunications blackout.",
       platforms: ["WhatsApp", "Facebook", "Telegram"],
-      redFlags: ["No link to official NASA bulletin", "Uses urgent language urging immediate forwarding", "Technical impossibility of selectively disabling handsets"]
+      redFlags: ["No link to official NASA bulletin", "Uses urgent language urging immediate forwarding", "Technical impossibility of selectively disabling handsets"],
     },
     {
       id: 2,
@@ -23,16 +23,16 @@ const DEFAULT_TRENDING = {
       severity: "Medium",
       description: "Phishing links disguised as festive corporate promotions prompting users to share contacts or bank OTPs.",
       platforms: ["WhatsApp", "Instagram"],
-      redFlags: ["Unofficial domain name", "Requests personal credentials or payment details", "Time-pressure countdown timer"]
+      redFlags: ["Unofficial domain name", "Requests personal credentials or payment details", "Time-pressure countdown timer"],
     },
     {
       id: 3,
       title: "Audio deepfakes imitating public leaders declaring state emergencies or bank runs.",
       category: "Politics",
       severity: "High",
-      description: "Synthesized synthetic voice clips impersonating government ministers circulated to incite localized panic.",
+      description: "Synthesized voice clips impersonating government ministers circulated to incite localized panic.",
       platforms: ["Twitter", "WhatsApp"],
-      redFlags: ["Monotone unnatural voice pacing", "Lack of corroboration from verified news broadcasts", "Circulated solely through private channels"]
+      redFlags: ["Unnatural voice pacing", "Lack of corroboration from verified news broadcasts", "Circulated solely through private channels"],
     },
     {
       id: 4,
@@ -41,7 +41,7 @@ const DEFAULT_TRENDING = {
       severity: "Medium",
       description: "Commercial ads masquerading as investigative medical discoveries promising miraculous cures without prescription.",
       platforms: ["YouTube", "Facebook"],
-      redFlags: ["Disregards clinical peer review", "Claims medical establishments are suppressing the secret", "Requires purchasing expensive proprietary supplements"]
+      redFlags: ["Disregards clinical peer review", "Claims medical establishments are suppressing the secret", "Requires purchasing expensive supplements"],
     },
     {
       id: 5,
@@ -50,10 +50,10 @@ const DEFAULT_TRENDING = {
       severity: "Low",
       description: "Heavily filtered ocean photos showing coral reefs mislabeled as newly emerged landmasses.",
       platforms: ["TikTok", "Reddit"],
-      redFlags: ["Absence of geological survey data", "Sensational headline formatting", "Image reverse search reveals historical footage"]
-    }
+      redFlags: ["Absence of geological survey data", "Sensational headline formatting", "Image reverse search reveals historical footage"],
+    },
   ],
-  generatedAt: new Date().toISOString()
+  generatedAt: new Date().toISOString(),
 };
 
 router.get("/trending", async (req, res) => {
@@ -79,8 +79,7 @@ router.get("/trending", async (req, res) => {
     }
   ]
 }
-
-Include 2-3 redFlags per story. Make platforms realistic (1-3 per story). Vary severity levels.`
+Include 2-3 redFlags per story. Make platforms realistic (1-3 per story). Vary severity levels.`,
       }],
       jsonMode: true,
     });
@@ -91,7 +90,7 @@ Include 2-3 redFlags per story. Make platforms realistic (1-3 per story). Vary s
       return res.json(result);
     }
   } catch (err) {
-    console.warn("Dynamic trending generation fallback:", err?.message);
+    console.warn("Trending fallback:", err?.message);
   }
 
   return res.json(DEFAULT_TRENDING);
