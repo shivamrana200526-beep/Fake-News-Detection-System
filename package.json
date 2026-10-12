@@ -7,7 +7,9 @@
     "dev:backend": "node --env-file=.env artifacts/api-server/src/index.js",
     "dev:frontend": "cd frontend-js && npm run dev",
     "start": "node --env-file=.env artifacts/api-server/src/index.js",
-    "build": "pnpm -r --if-present run build"
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "npm --prefix artifacts/api-server run build",
+    "build:frontend": "npm --prefix frontend-js run build"
   },
   "private": true,
   "devDependencies": {
