@@ -5,12 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "node --env-file=../../.env src/index.js",
+    "build": "node build.mjs",
     "start": "node --env-file=../../.env src/index.js"
   },
   "dependencies": {
     "@workspace/db": "workspace:*",
     "cors": "^2.8.5",
     "drizzle-orm": "^0.45.1",
+    "esbuild": "^0.27.3",
+    "esbuild-plugin-pino": "^2.1.1",
     "express": "^5.0.1",
     "openai": "^7.10.0"
   }
